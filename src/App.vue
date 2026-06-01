@@ -1,9 +1,9 @@
 <template>
-    <router-view />
+	<router-view />
 </template>
 
 <script setup>
-import { useRootFontSize } from '@/composables/useRootFontSize'
+	import { useRootFontSize } from '@/composables/useRootFontSize'
 
-useRootFontSize()
+	useRootFontSize()
 </script>

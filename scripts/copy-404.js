@@ -8,8 +8,8 @@ const indexPath = path.join(distDir, 'index.html')
 const notFoundPath = path.join(distDir, '404.html')
 
 if (!existsSync(indexPath)) {
-    console.error('copy-404: dist/index.html 不存在，请先执行 npm run build')
-    process.exit(1)
+	console.error('copy-404: dist/index.html 不存在，请先执行 npm run build')
+	process.exit(1)
 }
 
 copyFileSync(indexPath, notFoundPath)

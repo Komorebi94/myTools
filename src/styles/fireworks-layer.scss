@@ -1,11 +1,11 @@
 /* fireworks-js 注入的 canvas：全屏接收点击，UI 层 pointer-events 穿透 */
 .fireworks-host {
-    :deep(canvas) {
-        position: fixed !important;
-        inset: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        z-index: 4;
-        pointer-events: auto;
-    }
+	:deep(canvas) {
+		position: fixed !important;
+		inset: 0 !important;
+		width: 100% !important;
+		height: 100% !important;
+		z-index: 4;
+		pointer-events: auto;
+	}
 }

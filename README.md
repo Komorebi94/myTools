@@ -2,12 +2,12 @@
 
 Vue 3 + Vite 实现的跨年倒计时与生日祝福页面，支持烟花、弹幕、姓名分享与 GSAP 动画。
 
-| 页面 | 地址 |
-|------|------|
-| 跨年倒计时 | https://komorebi94.github.io/myTools/ |
-| 生日祝福 | https://komorebi94.github.io/myTools/birthday |
-| 健身存钱罐 | https://komorebi94.github.io/myTools/fitness |
-| LUJX 训练计划 | https://komorebi94.github.io/myTools/lujx |
+| 页面          | 地址                                          |
+| ------------- | --------------------------------------------- |
+| 跨年倒计时    | https://komorebi94.github.io/myTools/         |
+| 生日祝福      | https://komorebi94.github.io/myTools/birthday |
+| 健身存钱罐    | https://komorebi94.github.io/myTools/fitness  |
+| LUJX 训练计划 | https://komorebi94.github.io/myTools/lujx     |
 
 ## 快速开始
 
@@ -69,8 +69,8 @@ VITE_BASE=/myTools/
 
 - CI / Deploy 工作流里已写死上述变量，**推送即可**，无需本地再配。
 - 若仓库名变更，请同时修改：
-  - `.github/workflows/deploy.yml` 中的 `VITE_BASE`
-  - `.env.example` 中的 `VITE_BASE` 示例
+    - `.github/workflows/deploy.yml` 中的 `VITE_BASE`
+    - `.env.example` 中的 `VITE_BASE` 示例
 
 ### 本地模拟 GitHub Pages 构建
 
@@ -106,38 +106,38 @@ npm run preview
 
 ### 跨年倒计时 `/`
 
-| 参数 | 说明 |
-|------|------|
-| `onlyShowFireWorks=true` | 仅展示烟花，不显示倒计时 |
-| `testEffect=true` | 15 秒测试倒计时 |
-| `target` | 自定义目标时间（ISO 8601） |
-| `messages` | 自定义弹幕，逗号分隔 |
-| `name` | 姓名，显示在祝福语与弹幕中 |
+| 参数                     | 说明                       |
+| ------------------------ | -------------------------- |
+| `onlyShowFireWorks=true` | 仅展示烟花，不显示倒计时   |
+| `testEffect=true`        | 15 秒测试倒计时            |
+| `target`                 | 自定义目标时间（ISO 8601） |
+| `messages`               | 自定义弹幕，逗号分隔       |
+| `name`                   | 姓名，显示在祝福语与弹幕中 |
 
-| 场景 | 链接 |
-|------|------|
-| 首页 | `https://komorebi94.github.io/myTools/` |
-| 测试倒计时 | `https://komorebi94.github.io/myTools/?testEffect=true` |
-| 带姓名 | `https://komorebi94.github.io/myTools/?name=小明&testEffect=true` |
+| 场景       | 链接                                                              |
+| ---------- | ----------------------------------------------------------------- |
+| 首页       | `https://komorebi94.github.io/myTools/`                           |
+| 测试倒计时 | `https://komorebi94.github.io/myTools/?testEffect=true`           |
+| 带姓名     | `https://komorebi94.github.io/myTools/?name=小明&testEffect=true` |
 
 ### 生日祝福 `/birthday`
 
 霓虹渐变标题、飘气球、点燃蜡烛、粉金烟花、彩纸、弹幕与背景音乐（点燃蜡烛后播放，右下角可开关）。
 
-| 参数 | 说明 |
-|------|------|
-| `name` | 寿星姓名（标题与弹幕个性化） |
-| `age` | 年龄（1–119），显示在祝福语中 |
-| `messages` | 自定义弹幕，逗号分隔 |
-| `auto=false` | 关闭进入页面约 1.4 秒后自动庆祝 |
-| `music=false` | 关闭背景音乐与右下角音乐按钮 |
+| 参数          | 说明                            |
+| ------------- | ------------------------------- |
+| `name`        | 寿星姓名（标题与弹幕个性化）    |
+| `age`         | 年龄（1–119），显示在祝福语中   |
+| `messages`    | 自定义弹幕，逗号分隔            |
+| `auto=false`  | 关闭进入页面约 1.4 秒后自动庆祝 |
+| `music=false` | 关闭背景音乐与右下角音乐按钮    |
 
-| 场景 | 链接 |
-|------|------|
-| 生日页 | `https://komorebi94.github.io/myTools/birthday` |
-| 带姓名 | `https://komorebi94.github.io/myTools/birthday?name=小红` |
+| 场景      | 链接                                                             |
+| --------- | ---------------------------------------------------------------- |
+| 生日页    | `https://komorebi94.github.io/myTools/birthday`                  |
+| 带姓名    | `https://komorebi94.github.io/myTools/birthday?name=小红`        |
 | 姓名+年龄 | `https://komorebi94.github.io/myTools/birthday?name=小红&age=18` |
-| 手动庆祝 | `?auto=false`，进入后点「点燃蜡烛」 |
+| 手动庆祝  | `?auto=false`，进入后点「点燃蜡烛」                              |
 
 右上角悬停 **分享链接** 可复制带 `name` 的当前页链接。两页通过地址路径区分（`/` 与 `/birthday`）。
 
@@ -145,19 +145,19 @@ npm run preview
 
 虚拟激励金 + 周期化自重训练打卡。支持 `?day=N` 预览第 N 课次计划（不写库）。
 
-| 功能 | 说明 |
-|------|------|
+| 功能 | 说明                                     |
+| ---- | ---------------------------------------- |
 | 打卡 | 完成 / 未达标 / 缺席，影响余额与连续天数 |
-| 台账 | 记录与兑换 |
-| 设置 | 规则说明、JSON 导出/导入、重置 |
+| 台账 | 记录与兑换                               |
+| 设置 | 规则说明、JSON 导出/导入、重置           |
 
 ### LUJX 训练计划 `/lujx`
 
 四阶段自重进阶计划（周一二四六练），本地打卡与日历记录。
 
-| 参数 | 说明 |
-|------|------|
-| `tab` | `today` / `plan` / `records` |
+| 参数      | 说明                          |
+| --------- | ----------------------------- |
+| `tab`     | `today` / `plan` / `records`  |
 | `mockDay` | 预览第 N 天计划（不写入打卡） |
 
 「训练记录」页支持 JSON 备份导出/导入。数据仅存本机 `localStorage`。
@@ -186,11 +186,11 @@ src/
 
 ## 多端适配
 
-| 设备 | 断点 | 特性 |
-|------|------|------|
+| 设备 | 断点       | 特性                                           |
+| ---- | ---------- | ---------------------------------------------- |
 | 手机 | &lt; 768px | 卡片倒计时、较少烟花粒子、轻触放烟花、震动反馈 |
-| 平板 | 768–1023px | 中等字号与弹幕密度 |
-| 桌面 | ≥ 1024px | 固定根字号、鼠标点击/移动触发烟花 |
+| 平板 | 768–1023px | 中等字号与弹幕密度                             |
+| 桌面 | ≥ 1024px   | 固定根字号、鼠标点击/移动触发烟花              |
 
 其他：`100dvh`、safe-area、最后 10 秒全屏倒数、减弱动效降级、标签页重新可见时校准倒计时、Web App Manifest 支持添加到主屏幕。
 
