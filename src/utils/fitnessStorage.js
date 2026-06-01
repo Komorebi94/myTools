@@ -1,18 +1,7 @@
 import { FITNESS_STORAGE_KEY, RECORD_STATUS, SURPRISE_REWARD_TIERS } from '@/constants/fitness'
+import { formatDateKey, getYesterdayKey } from '@/utils/date'
 
-export function formatDateKey (date = new Date()) {
-    const y = date.getFullYear()
-    const m = String(date.getMonth() + 1).padStart(2, '0')
-    const d = String(date.getDate()).padStart(2, '0')
-    return `${y}-${m}-${d}`
-}
-
-export function getYesterdayKey (todayKey) {
-    const [y, m, d] = todayKey.split('-').map(Number)
-    const date = new Date(y, m - 1, d)
-    date.setDate(date.getDate() - 1)
-    return formatDateKey(date)
-}
+export { formatDateKey, getYesterdayKey }
 
 export function getDefaultState () {
     return {
@@ -140,4 +129,11 @@ export function applyDayRollover (state, todayKey = formatDateKey()) {
 export function clearFitnessStorage () {
     localStorage.removeItem(FITNESS_STORAGE_KEY)
     localStorage.removeItem(LEGACY_STORAGE_KEY)
+}
+
+/** @param {unknown} data */
+export function importFitnessState (data) {
+    const next = normalizeFitnessState(data)
+    saveFitnessState(next)
+    return next
 }

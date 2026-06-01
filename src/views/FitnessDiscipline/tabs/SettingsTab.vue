@@ -56,6 +56,18 @@
             </p>
         </section>
 
+        <section class="card">
+            <h3>数据备份</h3>
+            <p class="backup-hint">数据仅存本机浏览器，换机或清缓存前建议导出 JSON</p>
+            <div class="backup-actions">
+                <button type="button" class="backup-btn" @click="exportData">导出备份</button>
+                <label class="backup-btn import-label">
+                    导入备份
+                    <input type="file" accept="application/json,.json" hidden @change="onImport" />
+                </label>
+            </div>
+        </section>
+
         <section class="card danger-card">
             <h3>数据管理</h3>
             <p class="danger-hint">清空后余额、记录、连续天数与突破进度均不可恢复</p>
@@ -97,13 +109,19 @@ import {
 import { FITNESS_DISCIPLINE_KEY } from '../keys'
 import ConfirmModal from '../components/ConfirmModal.vue'
 
-const { resetAllData } = inject(FITNESS_DISCIPLINE_KEY)
+const { resetAllData, exportData, importData } = inject(FITNESS_DISCIPLINE_KEY)
 
 const resetStep = ref(0)
 
 const onReset = () => {
     resetAllData()
     resetStep.value = 0
+}
+
+function onImport (event) {
+    const file = event.target.files?.[0]
+    if (file) importData(file)
+    event.target.value = ''
 }
 </script>
 
@@ -175,6 +193,37 @@ const onReset = () => {
     strong {
         color: #c2410c;
     }
+}
+
+.backup-hint {
+    font-size: 0.75rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 0.65rem;
+}
+
+.backup-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.backup-btn {
+    flex: 1;
+    padding: 0.6rem 0.5rem;
+    border-radius: 0.65rem;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #334155;
+    cursor: pointer;
+    text-align: center;
+}
+
+.import-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .danger-hint {

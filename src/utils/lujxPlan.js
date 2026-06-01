@@ -13,6 +13,9 @@ import {
     USER_PROFILE,
     WEEK_DAY_LABEL
 } from '@/constants/lujx'
+import { formatDateKey, startOfWeekMonday } from '@/utils/date'
+
+export { formatDateKey as getDateKey }
 
 /** 每次动作预估耗时（秒） */
 const SEC_PER_REP = {
@@ -24,13 +27,6 @@ const SEC_PER_REP = {
 
 const WARMUP_MINUTES = 6
 const REST_MINUTES_PER_SET = 1.2
-
-export function getDateKey (date) {
-    const y = date.getFullYear()
-    const m = String(date.getMonth() + 1).padStart(2, '0')
-    const d = String(date.getDate()).padStart(2, '0')
-    return `${y}-${m}-${d}`
-}
 
 export function parseTarget (target) {
     const match = /^(\d+)x(\d+)/.exec(target)
@@ -187,7 +183,7 @@ export function estimateDurationMinutes (block) {
 export function calcSessionStreak (records, today = new Date()) {
     const checked = new Set(records.filter((r) => r.status === 'training').map((r) => r.date))
     let day = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-    const todayKey = getDateKey(day)
+    const todayKey = formatDateKey(day)
 
     if (TRAINING_DAYS.has(day.getDay()) && !checked.has(todayKey)) {
         day.setDate(day.getDate() - 1)
@@ -195,7 +191,7 @@ export function calcSessionStreak (records, today = new Date()) {
 
     let streak = 0
     for (let i = 0; i < 365; i += 1) {
-        const key = getDateKey(day)
+        const key = formatDateKey(day)
         if (TRAINING_DAYS.has(day.getDay())) {
             if (checked.has(key)) streak += 1
             else break
@@ -208,10 +204,7 @@ export function calcSessionStreak (records, today = new Date()) {
 export function calcWeekCompletion (records, today = new Date()) {
     const checked = new Set(records.filter((r) => r.status === 'training').map((r) => r.date))
     const day = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-    const dayOfWeek = day.getDay()
-    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
-    const monday = new Date(day)
-    monday.setDate(day.getDate() + mondayOffset)
+    const monday = startOfWeekMonday(day)
 
     let planned = 0
     let done = 0
@@ -221,7 +214,7 @@ export function calcWeekCompletion (records, today = new Date()) {
         if (d > day) break
         if (TRAINING_DAYS.has(d.getDay())) {
             planned += 1
-            if (checked.has(getDateKey(d))) done += 1
+            if (checked.has(formatDateKey(d))) done += 1
         }
     }
     return { done, planned }
@@ -234,8 +227,8 @@ export function getPlanForDate (date, startDate) {
     const dayIndex = date.getDay()
     const block = getDailyBlock(dayIndex, phase.preset)
     return {
-        dateKey: getDateKey(date),
-        dateLabel: `${getDateKey(date)} ${WEEK_DAY_LABEL[dayIndex]}`,
+        dateKey: formatDateKey(date),
+        dateLabel: `${formatDateKey(date)} ${WEEK_DAY_LABEL[dayIndex]}`,
         programDay,
         week,
         phase,
@@ -243,27 +236,18 @@ export function getPlanForDate (date, startDate) {
     }
 }
 
-function getMondayOfWeek (today = new Date()) {
-    const day = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-    const dayOfWeek = day.getDay()
-    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
-    const monday = new Date(day)
-    monday.setDate(day.getDate() + mondayOffset)
-    return monday
-}
-
 /** 本周已过去但未打卡的训练日 */
 export function getMissedTrainingDays (records, today = new Date(), startDate = null) {
     const checked = new Set(records.filter((r) => r.status === 'training').map((r) => r.date))
-    const todayKey = getDateKey(today)
+    const todayKey = formatDateKey(today)
     const effectiveStart = startDate || todayKey
-    const monday = getMondayOfWeek(today)
+    const monday = startOfWeekMonday(today)
     const missed = []
 
     for (let i = 0; i < 7; i += 1) {
         const d = new Date(monday)
         d.setDate(monday.getDate() + i)
-        const key = getDateKey(d)
+        const key = formatDateKey(d)
         if (key >= todayKey) continue
         if (key < effectiveStart) continue
         if (!TRAINING_DAYS.has(d.getDay())) continue
@@ -285,7 +269,7 @@ export function getNextPhaseInfo (week) {
     }
 }
 
-export function getCalendarDayStatus ({ key, isTrainingDay, isChecked, isToday }, nowKey, startDate) {
+export function getCalendarDayStatus ({ key, isTrainingDay, isChecked }, nowKey, startDate) {
     if (!startDate || key < startDate) return 'before_start'
     if (isChecked) return 'checked'
     if (key > nowKey) return isTrainingDay ? 'planned' : 'rest'
@@ -303,12 +287,11 @@ export function buildCalendarCells (monthDate, checkedSet, nowKey, startDate) {
 
     for (let i = 0; i < 42; i += 1) {
         const date = new Date(year, month, i - firstDay + 1)
-        const key = getDateKey(date)
+        const key = formatDateKey(date)
         const isTrainingDay = TRAINING_DAYS.has(date.getDay())
         const isChecked = checkedSet.has(key)
         const isToday = key === nowKey
-        const dayStatus = getCalendarDayStatus({ key, isTrainingDay, isChecked, isToday }, nowKey, effectiveStart)
-        const plan = startDate ? getPlanForDate(date, startDate) : null
+        const dayStatus = getCalendarDayStatus({ key, isTrainingDay, isChecked }, nowKey, effectiveStart)
         cells.push({
             key,
             day: date.getDate(),
@@ -317,8 +300,7 @@ export function buildCalendarCells (monthDate, checkedSet, nowKey, startDate) {
             isChecked,
             isTrainingDay,
             isMissed: dayStatus === 'missed',
-            dayStatus,
-            plan
+            dayStatus
         })
     }
     return cells
@@ -336,7 +318,7 @@ export function calcMonthlySummary (monthDate, records, startDate, nowKey) {
 
     for (let d = 1; d <= lastDay; d += 1) {
         const date = new Date(year, month, d)
-        const key = getDateKey(date)
+        const key = formatDateKey(date)
         if (key > nowKey || key < effectiveStart) continue
         if (!TRAINING_DAYS.has(date.getDay())) continue
         planned += 1

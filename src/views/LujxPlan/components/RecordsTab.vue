@@ -72,6 +72,18 @@
 
             <p class="hint">点击日期查看计划详情与状态</p>
         </div>
+
+        <section class="backup-panel">
+            <h3>数据备份</h3>
+            <p class="backup-hint">数据仅存本机浏览器，换机或清缓存前建议导出 JSON</p>
+            <div class="backup-actions">
+                <button type="button" class="backup-btn" @click="$emit('export-data')">导出备份</button>
+                <label class="backup-btn import-label">
+                    导入备份
+                    <input type="file" accept="application/json,.json" hidden @change="onImport" />
+                </label>
+            </div>
+        </section>
     </section>
 </template>
 
@@ -88,7 +100,13 @@ defineProps({
     isCurrentMonth: { type: Boolean, default: true }
 })
 
-defineEmits(['change-month', 'select-day', 'go-today'])
+const emit = defineEmits(['change-month', 'select-day', 'go-today', 'export-data', 'import-data'])
+
+function onImport (event) {
+    const file = event.target.files?.[0]
+    if (file) emit('import-data', file)
+    event.target.value = ''
+}
 
 const weekDayShort = WEEK_DAY_SHORT
 </script>
@@ -335,5 +353,52 @@ const weekDayShort = WEEK_DAY_SHORT
     text-align: center;
     font-size: 0.72rem;
     color: var(--lujx-text-dim);
+}
+
+.backup-panel {
+    padding: 0.85rem 1rem;
+    border-radius: var(--lujx-radius-lg);
+    background: var(--lujx-surface);
+    border: 1px solid var(--lujx-border);
+}
+
+.backup-panel h3 {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--lujx-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.backup-hint {
+    margin-top: 0.35rem;
+    font-size: 0.72rem;
+    color: var(--lujx-text-dim);
+    line-height: 1.45;
+}
+
+.backup-actions {
+    margin-top: 0.55rem;
+    display: flex;
+    gap: 0.45rem;
+}
+
+.backup-btn {
+    flex: 1;
+    padding: 0.55rem 0.5rem;
+    border-radius: var(--lujx-radius-sm);
+    border: 1px solid var(--lujx-border-strong);
+    background: var(--lujx-surface-2);
+    color: var(--lujx-text-secondary);
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+}
+
+.import-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>

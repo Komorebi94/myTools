@@ -32,7 +32,7 @@
             </button>
         </nav>
 
-        <FitnessToast :message="toast" />
+        <AppToast :message="toast" variant="fitness" anchor="footer" />
 
         <SurpriseRewardModal
             :visible="showSurpriseModal"
@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { ref, provide, watch, onMounted, onUnmounted } from 'vue'
+import { ref, provide, watch } from 'vue'
 import { APP_NAME, APP_TAGLINE } from '@/constants/fitness'
 import { FITNESS_TAB_TITLES, setPageTitle } from '@/utils/pageTitle'
 import { useFitnessDiscipline } from '@/composables/useFitnessDiscipline'
@@ -53,8 +53,11 @@ import { FITNESS_DISCIPLINE_KEY } from './keys'
 import HomeTab from './tabs/HomeTab.vue'
 import RecordsTab from './tabs/RecordsTab.vue'
 import SettingsTab from './tabs/SettingsTab.vue'
-import FitnessToast from './components/FitnessToast.vue'
+import AppToast from '@/components/AppToast/index.vue'
+import { usePageBodyClass } from '@/composables/usePageBodyClass'
 import SurpriseRewardModal from './components/SurpriseRewardModal.vue'
+
+usePageBodyClass('fitness-page-active')
 
 const fitness = useFitnessDiscipline()
 provide(FITNESS_DISCIPLINE_KEY, fitness)
@@ -81,13 +84,6 @@ watch(activeTab, (tab) => {
     setPageTitle(FITNESS_TAB_TITLES[tab] || FITNESS_TAB_TITLES.home)
 }, { immediate: true })
 
-onMounted(() => {
-    document.body.classList.add('fitness-page-active')
-})
-
-onUnmounted(() => {
-    document.body.classList.remove('fitness-page-active')
-})
 </script>
 
 <style scoped lang="scss">
@@ -99,6 +95,7 @@ onUnmounted(() => {
     flex-direction: column;
     overflow: hidden;
     background: #fff7ed;
+    --app-footer-stack: calc(4.75rem + var(--safe-bottom));
 }
 
 .fitness-bg {

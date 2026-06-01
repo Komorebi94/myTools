@@ -1,8 +1,5 @@
 <template>
-    <section
-        class="today-tab"
-        :class="{ 'today-tab--checkin-fixed': showFixedCheckin }"
-    >
+    <section class="today-tab">
         <div class="stats-strip">
             <article class="stat-item">
                 <strong>{{ trainingRecordsCount }}</strong>
@@ -135,28 +132,13 @@
                         <span>练后拉伸</span>
                     </div>
                     <p class="flow-content muted">{{ todayBlock.cooldown }}</p>
-                    <article
+                    <StretchCollapseItem
                         v-for="item in todayBlock.stretchItems"
                         :key="item.id"
-                        class="stretch-card"
-                    >
-                        <button
-                            type="button"
-                            class="stretch-toggle"
-                            :aria-expanded="isStretchExpanded(item.id)"
-                            @click="toggleStretch(item.id)"
-                        >
-                            <span class="stretch-emoji">{{ item.icon }}</span>
-                            <span class="stretch-toggle-text">
-                                <strong>{{ item.name }}</strong>
-                                <span class="stretch-meta">{{ item.duration }} · {{ item.target }}</span>
-                            </span>
-                            <span class="chevron" :class="{ open: isStretchExpanded(item.id) }">›</span>
-                        </button>
-                        <ol v-show="isStretchExpanded(item.id)" class="stretch-steps">
-                            <li v-for="(step, i) in item.steps" :key="i">{{ step }}</li>
-                        </ol>
-                    </article>
+                        :item="item"
+                        :expanded="isStretchExpanded(item.id)"
+                        @toggle="toggleStretch(item.id)"
+                    />
                 </section>
             </div>
 
@@ -194,48 +176,27 @@
                             <p>{{ todayBlock.restPlan?.stretch }}</p>
                         </div>
                     </div>
-                    <article
+                    <StretchCollapseItem
                         v-for="item in todayBlock.stretchItems"
                         :key="item.id"
-                        class="stretch-card nested"
-                    >
-                        <button
-                            type="button"
-                            class="stretch-toggle"
-                            :aria-expanded="isStretchExpanded(item.id)"
-                            @click="toggleStretch(item.id)"
-                        >
-                            <span class="stretch-emoji">{{ item.icon }}</span>
-                            <span class="stretch-toggle-text">
-                                <strong>{{ item.name }}</strong>
-                                <span class="stretch-meta">{{ item.duration }} · {{ item.target }}</span>
-                            </span>
-                            <span class="chevron" :class="{ open: isStretchExpanded(item.id) }">›</span>
-                        </button>
-                        <ol v-show="isStretchExpanded(item.id)" class="stretch-steps">
-                            <li v-for="(step, i) in item.steps" :key="i">{{ step }}</li>
-                        </ol>
-                    </article>
+                        :item="item"
+                        :expanded="isStretchExpanded(item.id)"
+                        nested
+                        title-tag="h5"
+                        @toggle="toggleStretch(item.id)"
+                    />
                 </article>
             </div>
 
-            <div v-if="showFixedCheckin" class="checkin-spacer" aria-hidden="true" />
         </article>
-
-        <div v-if="showFixedCheckin" class="fixed-checkin-bar">
-            <button type="button" class="btn-primary" :disabled="todayChecked" @click="$emit('check-in')">
-                <span v-if="todayChecked" class="btn-check">✓</span>
-                {{ todayChecked ? '今日已完成' : '完成训练打卡' }}
-            </button>
-            <button v-if="canUndoToday" type="button" class="btn-ghost" @click="$emit('undo')">撤销</button>
-        </div>
     </section>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
+import StretchCollapseItem from './StretchCollapseItem.vue'
 
-const props = defineProps({
+defineProps({
     todayLabel: String,
     todayBlock: Object,
     activePhase: Object,
@@ -246,8 +207,6 @@ const props = defineProps({
     warmupPlan: String,
     trainingTips: Object,
     isMockMode: Boolean,
-    todayChecked: Boolean,
-    canUndoToday: Boolean,
     trainingRecordsCount: Number,
     trainingStreak: Number,
     weekCompletion: Object,
@@ -255,13 +214,7 @@ const props = defineProps({
     remainingTrainingThisWeek: { type: Number, default: 0 }
 })
 
-defineEmits(['check-in', 'undo'])
-
 const expandedStretch = ref(new Set())
-
-const showFixedCheckin = computed(
-    () => props.todayBlock?.type === 'training' && !props.isMockMode
-)
 
 function isStretchExpanded (id) {
     return expandedStretch.value.has(id)
@@ -672,80 +625,6 @@ function toggleStretch (id) {
     }
 }
 
-.stretch-card {
-    margin-top: 0.45rem;
-    border-radius: var(--lujx-radius-md);
-    background: rgba(0, 0, 0, 0.22);
-    border: 1px solid var(--lujx-border);
-    overflow: hidden;
-
-    &.nested {
-        margin-top: 0.5rem;
-    }
-}
-
-.stretch-toggle {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.65rem 0.7rem;
-    border: none;
-    background: transparent;
-    color: inherit;
-    text-align: left;
-    cursor: pointer;
-}
-
-.stretch-emoji {
-    font-size: 1.15rem;
-    flex-shrink: 0;
-}
-
-.stretch-toggle-text {
-    flex: 1;
-    min-width: 0;
-
-    strong {
-        display: block;
-        font-size: 0.84rem;
-        font-weight: 700;
-    }
-}
-
-.stretch-meta {
-    display: block;
-    margin-top: 0.12rem;
-    font-size: 0.7rem;
-    color: var(--lujx-text-muted);
-    font-weight: 400;
-}
-
-.chevron {
-    flex-shrink: 0;
-    font-size: 1.1rem;
-    color: var(--lujx-text-dim);
-    transform: rotate(90deg);
-    transition: transform 0.2s ease;
-
-    &.open {
-        transform: rotate(-90deg);
-    }
-}
-
-.stretch-steps {
-    margin: 0;
-    padding: 0 0.7rem 0.65rem 1.75rem;
-    border-top: 1px solid var(--lujx-border);
-
-    li {
-        font-size: 0.74rem;
-        color: var(--lujx-text-secondary);
-        line-height: 1.5;
-        margin-bottom: 0.15rem;
-    }
-}
-
 .rest-hero {
     text-align: center;
     padding: 1rem 0.75rem;
@@ -814,72 +693,4 @@ function toggleStretch (id) {
     gap: 0.65rem;
 }
 
-.checkin-spacer {
-    height: var(--lujx-checkin-bar-h);
-}
-
-.fixed-checkin-bar {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: var(--lujx-footer-stack);
-    z-index: 29;
-    min-height: var(--lujx-checkin-bar-h);
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.5rem 1rem;
-    background: rgba(7, 11, 16, 0.96);
-    backdrop-filter: blur(16px);
-    border-top: 1px solid var(--lujx-border);
-    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.4);
-}
-
-.btn-primary {
-    flex: 1;
-    border: none;
-    border-radius: var(--lujx-radius-md);
-    padding: 0.78rem 1rem;
-    font-size: 0.9rem;
-    font-weight: 800;
-    color: #042f1a;
-    background: linear-gradient(135deg, var(--lujx-accent) 0%, #10b981 100%);
-    cursor: pointer;
-    box-shadow: 0 4px 20px var(--lujx-accent-glow);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.35rem;
-
-    &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        box-shadow: none;
-        color: var(--lujx-text-muted);
-        background: var(--lujx-surface-2);
-    }
-}
-
-.btn-check {
-    display: inline-flex;
-    width: 1.1rem;
-    height: 1.1rem;
-    align-items: center;
-    justify-content: center;
-    border-radius: 999px;
-    background: rgba(0, 0, 0, 0.15);
-    font-size: 0.7rem;
-}
-
-.btn-ghost {
-    flex-shrink: 0;
-    border: 1px solid var(--lujx-border-strong);
-    background: transparent;
-    color: var(--lujx-text-muted);
-    border-radius: var(--lujx-radius-md);
-    padding: 0 0.9rem;
-    font-size: 0.78rem;
-    font-weight: 600;
-    cursor: pointer;
-}
 </style>

@@ -17,7 +17,7 @@
             <router-link class="mock-exit" :to="{ path: '/lujx', query: { tab: activeTab } }">退出</router-link>
         </div>
 
-        <main class="content-area">
+        <main class="content-area" :class="{ 'content-area--checkin': showFixedCheckin }">
             <TodayTab
                 v-if="activeTab === 'today'"
                 :today-label="todayLabel"
@@ -31,14 +31,11 @@
                 :training-tips="trainingTips"
                 :is-mock-mode="isMockMode"
                 :today-checked="todayChecked"
-                :can-undo-today="canUndoToday"
                 :training-records-count="trainingRecordsCount"
                 :training-streak="trainingStreak"
                 :week-completion="weekCompletion"
                 :missed-training-days="missedTrainingDays"
                 :remaining-training-this-week="remainingTrainingThisWeek"
-                @check-in="checkInTraining"
-                @undo="undoTodayCheckIn"
             />
 
             <PlanTab
@@ -60,8 +57,18 @@
                 @change-month="changeMonth"
                 @select-day="openDayDetail"
                 @go-today="goToTodayMonth"
+                @export-data="exportData"
+                @import-data="importData"
             />
         </main>
+
+        <FixedCheckinBar
+            v-if="showFixedCheckin"
+            :checked="todayChecked"
+            :can-undo="canUndoToday"
+            @check-in="checkInTraining"
+            @undo="undoTodayCheckIn"
+        />
 
         <nav class="bottom-nav" aria-label="训练页面导航">
             <button
@@ -79,20 +86,23 @@
             </button>
         </nav>
 
-        <LujxToast :message="toast" />
+        <AppToast :message="toast" variant="lujx" :anchor="showFixedCheckin ? 'checkin' : 'footer'" />
 
         <DayDetailModal :plan="selectedDay" @close="closeDayDetail" />
     </div>
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted } from 'vue'
+import { computed } from 'vue'
 import { useLujxPlan } from '@/composables/useLujxPlan'
+import { usePageBodyClass } from '@/composables/usePageBodyClass'
+import AppToast from '@/components/AppToast/index.vue'
 import DayDetailModal from './components/DayDetailModal.vue'
-import LujxToast from './components/LujxToast.vue'
+import FixedCheckinBar from './components/FixedCheckinBar.vue'
 import PlanTab from './components/PlanTab.vue'
 import RecordsTab from './components/RecordsTab.vue'
 import TodayTab from './components/TodayTab.vue'
+usePageBodyClass('lujx-page-active')
 
 const {
     tabs,
@@ -125,13 +135,16 @@ const {
     nextPhaseInfo,
     isCalendarCurrentMonth,
     monthlySummary,
+    showFixedCheckin,
     checkInTraining,
     undoTodayCheckIn,
     changeMonth,
     openDayDetail,
     closeDayDetail,
     goToTodayMonth,
-    setActiveTab
+    setActiveTab,
+    exportData,
+    importData
 } = useLujxPlan()
 
 const pageTitle = computed(() => {
@@ -139,18 +152,10 @@ const pageTitle = computed(() => {
     if (activeTab.value === 'plan') return '进阶计划'
     return '训练记录'
 })
-
-onMounted(() => {
-    document.body.classList.add('lujx-page-active')
-})
-
-onUnmounted(() => {
-    document.body.classList.remove('lujx-page-active')
-})
 </script>
 
 <style lang="scss">
-@import './lujx-theme.scss';
+@use './lujx-theme';
 </style>
 
 <style scoped lang="scss">
@@ -248,7 +253,7 @@ onUnmounted(() => {
     -webkit-overflow-scrolling: touch;
     padding-bottom: 0.5rem;
 
-    &:has(.today-tab--checkin-fixed) {
+    &.content-area--checkin {
         padding-bottom: calc(var(--lujx-checkin-stack) + 0.75rem);
     }
 }

@@ -5,24 +5,35 @@ const LEGACY_KEY = 'lujx_daily_checkin_v1'
 export function loadLujxState () {
     try {
         let raw = localStorage.getItem(LUJX_STORAGE_KEY)
+        let migratedFromLegacy = false
         if (!raw) {
             raw = localStorage.getItem(LEGACY_KEY)
             if (!raw) return { startDate: null, records: [] }
+            migratedFromLegacy = true
         }
 
         const parsed = JSON.parse(raw)
+        let state
         if (Array.isArray(parsed)) {
-            return migrateLegacyRecords(parsed)
+            state = migrateLegacyRecords(parsed)
+        } else if (!parsed || typeof parsed !== 'object') {
+            state = { startDate: null, records: [] }
+        } else {
+            const records = Array.isArray(parsed.records)
+                ? parsed.records.filter((item) => item?.date && item.status === 'training')
+                : []
+            state = {
+                startDate: typeof parsed.startDate === 'string' ? parsed.startDate : inferStartDate(records),
+                records
+            }
         }
-        if (!parsed || typeof parsed !== 'object') return { startDate: null, records: [] }
 
-        const records = Array.isArray(parsed.records)
-            ? parsed.records.filter((item) => item?.date && item.status === 'training')
-            : []
-        return {
-            startDate: typeof parsed.startDate === 'string' ? parsed.startDate : inferStartDate(records),
-            records
+        if (migratedFromLegacy) {
+            saveLujxState(state)
+            localStorage.removeItem(LEGACY_KEY)
         }
+
+        return state
     } catch {
         return { startDate: null, records: [] }
     }
@@ -45,4 +56,18 @@ function inferStartDate (records) {
 
 export function saveLujxState (state) {
     localStorage.setItem(LUJX_STORAGE_KEY, JSON.stringify(state))
+}
+
+/** @param {unknown} data */
+export function importLujxState (data) {
+    if (!data || typeof data !== 'object') throw new Error('无效的备份格式')
+    const records = Array.isArray(data.records)
+        ? data.records.filter((item) => item?.date && item.status === 'training')
+        : []
+    const state = {
+        startDate: typeof data.startDate === 'string' ? data.startDate : inferStartDate(records),
+        records
+    }
+    saveLujxState(state)
+    return state
 }

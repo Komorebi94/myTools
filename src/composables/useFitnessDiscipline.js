@@ -1,6 +1,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { parseSimDay } from '@/utils/fitnessSimDay'
+import { useTodayKey } from '@/composables/useTodayKey'
+import { downloadJsonBackup, readJsonFile } from '@/utils/jsonBackup'
 import {
     REWARDS,
     RECORD_STATUS,
@@ -9,9 +11,9 @@ import {
 } from '@/constants/fitness'
 import { findSurpriseTier } from '@/utils/fitnessSurprise'
 import {
-    formatDateKey,
     loadFitnessState,
     saveFitnessState,
+    importFitnessState,
     applyDayRollover,
     getDayWorkoutRecord,
     getDefaultState,
@@ -33,7 +35,7 @@ function buildRecord ({ date, status, moneyChange, remark, afterMoney }) {
 export function useFitnessDiscipline () {
     const route = useRoute()
     const state = ref(getDefaultState())
-    const todayKey = ref(formatDateKey())
+    const { todayKey, refreshToday } = useTodayKey()
     const toast = ref('')
     const showSurpriseModal = ref(false)
     const activeSurpriseTierId = ref(null)
@@ -45,10 +47,6 @@ export function useFitnessDiscipline () {
     const previewSessionIndex = computed(() =>
         isSimMode.value ? simDay.value : state.value.totalCheckDays
     )
-
-    const refreshToday = () => {
-        todayKey.value = formatDateKey()
-    }
 
     const persist = () => {
         saveFitnessState(state.value)
@@ -436,6 +434,27 @@ export function useFitnessDiscipline () {
         showToast('数据已清空，重新开始自律之旅')
     }
 
+    function exportData () {
+        downloadJsonBackup(`fitness-discipline-${Date.now()}.json`, {
+            version: 1,
+            exportedAt: new Date().toISOString(),
+            ...state.value
+        })
+        showToast('备份已导出')
+    }
+
+    async function importData (file) {
+        try {
+            const data = await readJsonFile(file)
+            state.value = importFitnessState(data)
+            refreshToday()
+            syncPushVariantToSession()
+            showToast('备份已导入')
+        } catch {
+            showToast('导入失败，请检查 JSON 格式')
+        }
+    }
+
     onMounted(init)
 
     return {
@@ -470,6 +489,8 @@ export function useFitnessDiscipline () {
         claimBreakthrough,
         setPushVariant,
         resetAllData,
+        exportData,
+        importData,
         showToast,
         init
     }

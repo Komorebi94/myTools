@@ -19,7 +19,6 @@ import {
     estimateDurationMinutes,
     getActivePhase,
     getDailyBlock,
-    getDateKey,
     getDayIndexForProgramDay,
     getMissedTrainingDays,
     getMockStats,
@@ -30,11 +29,15 @@ import {
     getWeekFromProgramDay,
     isSameCalendarMonth
 } from '@/utils/lujxPlan'
-import { loadLujxState, saveLujxState } from '@/utils/lujxStorage'
+import { loadLujxState, saveLujxState, importLujxState } from '@/utils/lujxStorage'
+import { parseQueryPositiveInt } from '@/utils/routeQuery'
+import { useTodayKey } from '@/composables/useTodayKey'
+import { downloadJsonBackup, readJsonFile } from '@/utils/jsonBackup'
 
 export function useLujxPlan () {
     const route = useRoute()
     const router = useRouter()
+    const { todayKey, todayDate, refreshToday } = useTodayKey()
 
     const state = ref(loadLujxState())
     const toast = ref('')
@@ -42,11 +45,7 @@ export function useLujxPlan () {
     const selectedDay = ref(null)
     let toastTimer = null
 
-    const mockDay = computed(() => {
-        const raw = Array.isArray(route.query.mockDay) ? route.query.mockDay[0] : route.query.mockDay
-        const n = Number(raw)
-        return Number.isInteger(n) && n > 0 ? n : null
-    })
+    const mockDay = computed(() => parseQueryPositiveInt(route.query, 'mockDay'))
     const isMockMode = computed(() => mockDay.value !== null)
 
     const activeTab = computed({
@@ -61,12 +60,9 @@ export function useLujxPlan () {
         }
     })
 
-    const realToday = new Date()
-    const todayKey = getDateKey(realToday)
-
     const programDay = computed(() => {
         if (mockDay.value) return mockDay.value
-        return getProgramDayFromStart(state.value.startDate, realToday)
+        return getProgramDayFromStart(state.value.startDate, todayDate.value)
     })
 
     const currentWeek = computed(() => getWeekFromProgramDay(programDay.value))
@@ -75,7 +71,7 @@ export function useLujxPlan () {
 
     const previewDayIndex = computed(() => {
         if (mockDay.value) return getDayIndexForProgramDay(mockDay.value)
-        return realToday.getDay()
+        return todayDate.value.getDay()
     })
 
     const todayBlock = computed(() => getDailyBlock(previewDayIndex.value, activePhase.value.preset))
@@ -85,10 +81,10 @@ export function useLujxPlan () {
             const sessionInWeek = PLAN_DAYS.slice(0, (mockDay.value - 1) % 7 + 1).filter((d) => TRAINING_DAYS.has(d)).length
             return `计划第 ${mockDay.value} 天 · ${WEEK_DAY_LABEL[previewDayIndex.value]} · 第 ${currentWeek.value} 周第 ${sessionInWeek} 练`
         }
-        return `${todayKey} ${WEEK_DAY_LABEL[realToday.getDay()]}`
+        return `${todayKey.value} ${WEEK_DAY_LABEL[todayDate.value.getDay()]}`
     })
 
-    const todayChecked = computed(() => state.value.records.some((item) => item.date === todayKey))
+    const todayChecked = computed(() => state.value.records.some((item) => item.date === todayKey.value))
 
     const trainingRecordsCount = computed(() => {
         if (isMockMode.value) return getMockStats(mockDay.value).trainingRecordsCount
@@ -97,7 +93,7 @@ export function useLujxPlan () {
 
     const trainingStreak = computed(() => {
         if (isMockMode.value) return getMockStats(mockDay.value).trainingStreak
-        return calcSessionStreak(state.value.records, realToday)
+        return calcSessionStreak(state.value.records, todayDate.value)
     })
 
     const weekCompletion = computed(() => {
@@ -105,7 +101,7 @@ export function useLujxPlan () {
             const done = getMockStats(mockDay.value).trainingRecordsCount % 4
             return { done: done || 4, planned: 4 }
         }
-        return calcWeekCompletion(state.value.records, realToday)
+        return calcWeekCompletion(state.value.records, todayDate.value)
     })
 
     const checkedDateSet = computed(() => new Set(state.value.records.map((item) => item.date)))
@@ -128,7 +124,12 @@ export function useLujxPlan () {
     })
 
     const calendarCells = computed(() =>
-        buildCalendarCells(calendarMonth.value, checkedDateSet.value, todayKey, state.value.startDate || todayKey)
+        buildCalendarCells(
+            calendarMonth.value,
+            checkedDateSet.value,
+            todayKey.value,
+            state.value.startDate || todayKey.value
+        )
     )
 
     const canUndoToday = computed(() => todayChecked.value && !isMockMode.value)
@@ -137,7 +138,11 @@ export function useLujxPlan () {
 
     const missedTrainingDays = computed(() => {
         if (isMockMode.value) return []
-        return getMissedTrainingDays(state.value.records, realToday, state.value.startDate || todayKey)
+        return getMissedTrainingDays(
+            state.value.records,
+            todayDate.value,
+            state.value.startDate || todayKey.value
+        )
     })
 
     const remainingTrainingThisWeek = computed(() => {
@@ -147,7 +152,7 @@ export function useLujxPlan () {
 
     const nextPhaseInfo = computed(() => getNextPhaseInfo(currentWeek.value))
 
-    const isCalendarCurrentMonth = computed(() => isSameCalendarMonth(calendarMonth.value, realToday))
+    const isCalendarCurrentMonth = computed(() => isSameCalendarMonth(calendarMonth.value, todayDate.value))
 
     const monthlySummary = computed(() => {
         if (isMockMode.value) {
@@ -156,10 +161,14 @@ export function useLujxPlan () {
         return calcMonthlySummary(
             calendarMonth.value,
             state.value.records,
-            state.value.startDate || todayKey,
-            todayKey
+            state.value.startDate || todayKey.value,
+            todayKey.value
         )
     })
+
+    const showFixedCheckin = computed(
+        () => activeTab.value === 'today' && todayBlock.value.type === 'training' && !isMockMode.value
+    )
 
     function showToast (message) {
         toast.value = message
@@ -177,27 +186,34 @@ export function useLujxPlan () {
     function checkInTraining () {
         if (isMockMode.value || todayBlock.value.type !== 'training' || todayChecked.value) return
 
-        const startDate = state.value.startDate || todayKey
-        const nextRecords = [{ date: todayKey, status: 'training' }, ...state.value.records.filter((r) => r.date !== todayKey)].slice(0, 240)
+        const startDate = state.value.startDate || todayKey.value
+        const nextRecords = [
+            { date: todayKey.value, status: 'training' },
+            ...state.value.records.filter((r) => r.date !== todayKey.value)
+        ].slice(0, 240)
         persist({ startDate, records: nextRecords })
         showToast('训练打卡成功 🎉')
     }
 
     function undoTodayCheckIn () {
         if (isMockMode.value || !todayChecked.value) return
-        const nextRecords = state.value.records.filter((r) => r.date !== todayKey)
+        const nextRecords = state.value.records.filter((r) => r.date !== todayKey.value)
         persist({ ...state.value, records: nextRecords })
         showToast('已撤销今日打卡')
     }
 
     function changeMonth (delta) {
-        calendarMonth.value = new Date(calendarMonth.value.getFullYear(), calendarMonth.value.getMonth() + delta, 1)
+        calendarMonth.value = new Date(
+            calendarMonth.value.getFullYear(),
+            calendarMonth.value.getMonth() + delta,
+            1
+        )
     }
 
     function openDayDetail (cell) {
         if (!cell.inMonth) return
         const date = new Date(`${cell.key}T00:00:00`)
-        const effectiveStart = state.value.startDate || todayKey
+        const effectiveStart = state.value.startDate || todayKey.value
         selectedDay.value = {
             ...getPlanForDate(date, effectiveStart),
             dayStatus: cell.dayStatus,
@@ -208,6 +224,7 @@ export function useLujxPlan () {
     function goToTodayMonth () {
         const now = new Date()
         calendarMonth.value = new Date(now.getFullYear(), now.getMonth(), 1)
+        refreshToday()
     }
 
     function closeDayDetail () {
@@ -216,6 +233,32 @@ export function useLujxPlan () {
 
     function setActiveTab (id) {
         activeTab.value = id
+    }
+
+    function reloadState () {
+        state.value = loadLujxState()
+    }
+
+    function exportData () {
+        downloadJsonBackup(`lujx-plan-${Date.now()}.json`, {
+            version: 2,
+            exportedAt: new Date().toISOString(),
+            startDate: state.value.startDate,
+            records: state.value.records
+        })
+        showToast('备份已导出')
+    }
+
+    async function importData (file) {
+        try {
+            const data = await readJsonFile(file)
+            importLujxState(data)
+            reloadState()
+            refreshToday()
+            showToast('备份已导入')
+        } catch {
+            showToast('导入失败，请检查 JSON 格式')
+        }
     }
 
     return {
@@ -242,7 +285,6 @@ export function useLujxPlan () {
         phaseProgress,
         calendarTitle,
         calendarCells,
-        checkedDateSet,
         selectedDay,
         todayDayIndex,
         missedTrainingDays,
@@ -250,12 +292,16 @@ export function useLujxPlan () {
         nextPhaseInfo,
         isCalendarCurrentMonth,
         monthlySummary,
+        showFixedCheckin,
         checkInTraining,
         undoTodayCheckIn,
         changeMonth,
         openDayDetail,
         closeDayDetail,
         goToTodayMonth,
-        setActiveTab
+        setActiveTab,
+        reloadState,
+        exportData,
+        importData
     }
 }

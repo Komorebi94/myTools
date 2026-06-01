@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { resolveAppBase } from '@/utils/resolveAppBase'
 import { resolveRouteTitle, setPageTitle } from '@/utils/pageTitle'
-import HappyNewYear from '@/views/HappyNewYear/index.vue'
-import Birthday from '@/views/Birthday/index.vue'
-import FitnessDiscipline from '@/views/FitnessDiscipline/index.vue'
-import LujxPlan from '@/views/LujxPlan/index.vue'
+
+const HappyNewYear = () => import('@/views/HappyNewYear/index.vue')
+const Birthday = () => import('@/views/Birthday/index.vue')
+const FitnessDiscipline = () => import('@/views/FitnessDiscipline/index.vue')
+const LujxPlan = () => import('@/views/LujxPlan/index.vue')
 
 const routes = [
     {
