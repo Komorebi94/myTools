@@ -45,8 +45,9 @@
 </template>
 
 <script setup>
-import { ref, provide, onMounted, onUnmounted } from 'vue'
+import { ref, provide, watch, onMounted, onUnmounted } from 'vue'
 import { APP_NAME, APP_TAGLINE } from '@/constants/fitness'
+import { FITNESS_TAB_TITLES, setPageTitle } from '@/utils/pageTitle'
 import { useFitnessDiscipline } from '@/composables/useFitnessDiscipline'
 import { FITNESS_DISCIPLINE_KEY } from './keys'
 import HomeTab from './tabs/HomeTab.vue'
@@ -75,6 +76,10 @@ const navItems = [
     { id: 'records', label: '台账', icon: '📒' },
     { id: 'settings', label: '规则', icon: '⚙️' }
 ]
+
+watch(activeTab, (tab) => {
+    setPageTitle(FITNESS_TAB_TITLES[tab] || FITNESS_TAB_TITLES.home)
+}, { immediate: true })
 
 onMounted(() => {
     document.body.classList.add('fitness-page-active')
