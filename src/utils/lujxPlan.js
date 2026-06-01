@@ -243,27 +243,118 @@ export function getPlanForDate (date, startDate) {
     }
 }
 
+function getMondayOfWeek (today = new Date()) {
+    const day = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    const dayOfWeek = day.getDay()
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+    const monday = new Date(day)
+    monday.setDate(day.getDate() + mondayOffset)
+    return monday
+}
+
+/** 本周已过去但未打卡的训练日 */
+export function getMissedTrainingDays (records, today = new Date(), startDate = null) {
+    const checked = new Set(records.filter((r) => r.status === 'training').map((r) => r.date))
+    const todayKey = getDateKey(today)
+    const effectiveStart = startDate || todayKey
+    const monday = getMondayOfWeek(today)
+    const missed = []
+
+    for (let i = 0; i < 7; i += 1) {
+        const d = new Date(monday)
+        d.setDate(monday.getDate() + i)
+        const key = getDateKey(d)
+        if (key >= todayKey) continue
+        if (key < effectiveStart) continue
+        if (!TRAINING_DAYS.has(d.getDay())) continue
+        if (!checked.has(key)) {
+            missed.push({ dateKey: key, label: WEEK_DAY_LABEL[d.getDay()] })
+        }
+    }
+    return missed
+}
+
+export function getNextPhaseInfo (week) {
+    const current = getActivePhase(week)
+    const idx = PHASES.findIndex((p) => p.id === current.id)
+    if (idx < 0 || idx >= PHASES.length - 1) return null
+    const next = PHASES[idx + 1]
+    return {
+        phase: next,
+        weeksUntil: Math.max(0, next.weekStart - week)
+    }
+}
+
+export function getCalendarDayStatus ({ key, isTrainingDay, isChecked, isToday }, nowKey, startDate) {
+    if (!startDate || key < startDate) return 'before_start'
+    if (isChecked) return 'checked'
+    if (key > nowKey) return isTrainingDay ? 'planned' : 'rest'
+    if (key === nowKey) return isTrainingDay ? 'today_training' : 'today_rest'
+    if (isTrainingDay) return 'missed'
+    return 'rest'
+}
+
 export function buildCalendarCells (monthDate, checkedSet, nowKey, startDate) {
     const year = monthDate.getFullYear()
     const month = monthDate.getMonth()
     const firstDay = new Date(year, month, 1).getDay()
+    const effectiveStart = startDate || nowKey
     const cells = []
 
     for (let i = 0; i < 42; i += 1) {
         const date = new Date(year, month, i - firstDay + 1)
         const key = getDateKey(date)
+        const isTrainingDay = TRAINING_DAYS.has(date.getDay())
+        const isChecked = checkedSet.has(key)
+        const isToday = key === nowKey
+        const dayStatus = getCalendarDayStatus({ key, isTrainingDay, isChecked, isToday }, nowKey, effectiveStart)
         const plan = startDate ? getPlanForDate(date, startDate) : null
         cells.push({
             key,
             day: date.getDate(),
             inMonth: date.getMonth() === month,
-            isToday: key === nowKey,
-            isChecked: checkedSet.has(key),
-            isTrainingDay: TRAINING_DAYS.has(date.getDay()),
+            isToday,
+            isChecked,
+            isTrainingDay,
+            isMissed: dayStatus === 'missed',
+            dayStatus,
             plan
         })
     }
     return cells
+}
+
+export function calcMonthlySummary (monthDate, records, startDate, nowKey) {
+    const year = monthDate.getFullYear()
+    const month = monthDate.getMonth()
+    const checked = new Set(records.filter((r) => r.status === 'training').map((r) => r.date))
+    const effectiveStart = startDate || nowKey
+    let planned = 0
+    let done = 0
+    let estimatedKcal = 0
+    const lastDay = new Date(year, month + 1, 0).getDate()
+
+    for (let d = 1; d <= lastDay; d += 1) {
+        const date = new Date(year, month, d)
+        const key = getDateKey(date)
+        if (key > nowKey || key < effectiveStart) continue
+        if (!TRAINING_DAYS.has(date.getDay())) continue
+        planned += 1
+        if (checked.has(key)) {
+            done += 1
+            const week = getWeekFromProgramDay(getProgramDayFromStart(effectiveStart, date))
+            const phase = getActivePhase(week)
+            const block = getDailyBlock(date.getDay(), phase.preset)
+            estimatedKcal += estimateCalories(block)
+        }
+    }
+
+    const completionRate = planned > 0 ? Math.round((done / planned) * 100) : 0
+    return { planned, done, completionRate, estimatedKcal }
+}
+
+export function isSameCalendarMonth (monthDate, today = new Date()) {
+    return monthDate.getFullYear() === today.getFullYear() && monthDate.getMonth() === today.getMonth()
 }
 
 export function getPhaseProgress (week, phase) {

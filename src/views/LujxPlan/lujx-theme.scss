@@ -1,0 +1,39 @@
+// Lujx 训练页设计 token（子组件通过 var(--lujx-*) 继承）
+.lujx-plan {
+    --lujx-bg: #070b10;
+    --lujx-bg-mesh: radial-gradient(ellipse 90% 60% at 50% -8%, rgba(34, 229, 132, 0.22), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 100% 20%, rgba(56, 189, 248, 0.12), transparent 50%),
+        linear-gradient(180deg, #0c1219 0%, #070b10 42%, #05080c 100%);
+    --lujx-surface: rgba(20, 28, 38, 0.92);
+    --lujx-surface-2: rgba(28, 38, 52, 0.88);
+    --lujx-surface-glass: rgba(255, 255, 255, 0.04);
+    --lujx-border: rgba(255, 255, 255, 0.08);
+    --lujx-border-strong: rgba(255, 255, 255, 0.14);
+    --lujx-text: #f1f5f9;
+    --lujx-text-secondary: #cbd5e1;
+    --lujx-text-muted: #94a3b8;
+    --lujx-text-dim: #64748b;
+    --lujx-accent: #22e584;
+    --lujx-accent-soft: rgba(34, 229, 132, 0.14);
+    --lujx-accent-glow: rgba(34, 229, 132, 0.35);
+    --lujx-blue: #38bdf8;
+    --lujx-blue-soft: rgba(56, 189, 248, 0.14);
+    --lujx-orange: #fb923c;
+    --lujx-orange-soft: rgba(251, 146, 60, 0.14);
+    --lujx-purple: #a78bfa;
+    --lujx-purple-soft: rgba(167, 139, 250, 0.14);
+    --lujx-rest: #67e8f9;
+    --lujx-danger: #f87171;
+    --lujx-radius-sm: 0.65rem;
+    --lujx-radius-md: 0.85rem;
+    --lujx-radius-lg: 1.1rem;
+    --lujx-radius-xl: 1.25rem;
+    --lujx-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    --lujx-shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.35);
+
+    /* 底部 Tab 栏 / 固定打卡栏高度（避免互相遮挡） */
+    --lujx-tab-bar-h: 4.75rem;
+    --lujx-checkin-bar-h: 3.6rem;
+    --lujx-footer-stack: calc(var(--lujx-tab-bar-h) + var(--safe-bottom));
+    --lujx-checkin-stack: calc(var(--lujx-tab-bar-h) + var(--lujx-checkin-bar-h) + var(--safe-bottom));
+}

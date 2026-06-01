@@ -12,6 +12,7 @@ import {
 } from '@/constants/lujx'
 import {
     buildCalendarCells,
+    calcMonthlySummary,
     calcSessionStreak,
     calcWeekCompletion,
     estimateCalories,
@@ -20,11 +21,14 @@ import {
     getDailyBlock,
     getDateKey,
     getDayIndexForProgramDay,
+    getMissedTrainingDays,
     getMockStats,
+    getNextPhaseInfo,
     getPhaseProgress,
     getPlanForDate,
     getProgramDayFromStart,
-    getWeekFromProgramDay
+    getWeekFromProgramDay,
+    isSameCalendarMonth
 } from '@/utils/lujxPlan'
 import { loadLujxState, saveLujxState } from '@/utils/lujxStorage'
 
@@ -129,6 +133,34 @@ export function useLujxPlan () {
 
     const canUndoToday = computed(() => todayChecked.value && !isMockMode.value)
 
+    const todayDayIndex = computed(() => previewDayIndex.value)
+
+    const missedTrainingDays = computed(() => {
+        if (isMockMode.value) return []
+        return getMissedTrainingDays(state.value.records, realToday, state.value.startDate || todayKey)
+    })
+
+    const remainingTrainingThisWeek = computed(() => {
+        const { done, planned } = weekCompletion.value
+        return Math.max(0, planned - done)
+    })
+
+    const nextPhaseInfo = computed(() => getNextPhaseInfo(currentWeek.value))
+
+    const isCalendarCurrentMonth = computed(() => isSameCalendarMonth(calendarMonth.value, realToday))
+
+    const monthlySummary = computed(() => {
+        if (isMockMode.value) {
+            return { planned: 0, done: 0, completionRate: 0, estimatedKcal: 0 }
+        }
+        return calcMonthlySummary(
+            calendarMonth.value,
+            state.value.records,
+            state.value.startDate || todayKey,
+            todayKey
+        )
+    })
+
     function showToast (message) {
         toast.value = message
         if (toastTimer) clearTimeout(toastTimer)
@@ -166,7 +198,16 @@ export function useLujxPlan () {
         if (!cell.inMonth) return
         const date = new Date(`${cell.key}T00:00:00`)
         const effectiveStart = state.value.startDate || todayKey
-        selectedDay.value = getPlanForDate(date, effectiveStart)
+        selectedDay.value = {
+            ...getPlanForDate(date, effectiveStart),
+            dayStatus: cell.dayStatus,
+            isChecked: cell.isChecked
+        }
+    }
+
+    function goToTodayMonth () {
+        const now = new Date()
+        calendarMonth.value = new Date(now.getFullYear(), now.getMonth(), 1)
     }
 
     function closeDayDetail () {
@@ -203,11 +244,18 @@ export function useLujxPlan () {
         calendarCells,
         checkedDateSet,
         selectedDay,
+        todayDayIndex,
+        missedTrainingDays,
+        remainingTrainingThisWeek,
+        nextPhaseInfo,
+        isCalendarCurrentMonth,
+        monthlySummary,
         checkInTraining,
         undoTodayCheckIn,
         changeMonth,
         openDayDetail,
         closeDayDetail,
+        goToTodayMonth,
         setActiveTab
     }
 }
