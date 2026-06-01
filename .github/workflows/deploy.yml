@@ -30,7 +30,7 @@ jobs:
       - run: npm test
       - run: npm run build
         env:
-          VITE_BASE: /HappyNewYear/
+          VITE_BASE: /myTools/
 
       - uses: actions/upload-pages-artifact@v3
         with:
