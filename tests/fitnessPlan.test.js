@@ -4,6 +4,7 @@ import { getAvailablePushVariants } from '../src/utils/fitnessPlan.js'
 import { resolvePushVariant } from '../src/utils/fitnessProgression.js'
 import { getSessionPhase } from '../src/utils/fitnessProgression.js'
 import { calcDailyCompleteReward } from '../src/utils/fitnessRewards.js'
+import { REWARDS } from '../src/constants/fitness.js'
 
 describe('training rhythm', () => {
 	it('cycles accumulate → consolidate → progress', () => {
@@ -47,7 +48,7 @@ describe('rewards follow progression', () => {
 	})
 
 	it('uses deload reward on deload session', () => {
-		expect(calcDailyCompleteReward(24).amount).toBe(10)
+		expect(calcDailyCompleteReward(24).amount).toBe(REWARDS.DELOAD_COMPLETE)
 	})
 })
 

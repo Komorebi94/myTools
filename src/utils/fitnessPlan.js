@@ -15,6 +15,14 @@ import {
 	getUnlockedPushVariants
 } from '@/utils/fitnessProgression'
 import { getRewardPreview } from '@/utils/fitnessRewards'
+import { getExerciseGuide } from '@/constants/fitnessGuides'
+import { assignPlanCalories } from '@/utils/fitnessCalories'
+
+function attachGuide(task, guideId) {
+	const guide = getExerciseGuide(guideId)
+	if (guide) task.guide = guide
+	return task
+}
 
 function formatReps(label, reps, sets, suffix = '', rhythmNote = '') {
 	return {
@@ -39,19 +47,22 @@ function buildRepTask(exercise, sessionIndex, category) {
 		repCap: exercise.repCap,
 		repStep: exercise.repStep ?? 1
 	})
-	return {
-		id: exercise.id,
-		icon: exercise.icon,
-		category,
-		phase: scheme.phase,
-		...formatReps(
-			exercise.label,
-			scheme.reps,
-			scheme.sets,
-			exercise.suffix ?? '',
-			scheme.rhythmNote
-		)
-	}
+	return attachGuide(
+		{
+			id: exercise.id,
+			icon: exercise.icon,
+			category,
+			phase: scheme.phase,
+			...formatReps(
+				exercise.label,
+				scheme.reps,
+				scheme.sets,
+				exercise.suffix ?? '',
+				scheme.rhythmNote
+			)
+		},
+		exercise.id
+	)
 }
 
 function buildHoldTask(exercise, sessionIndex, category) {
@@ -61,19 +72,22 @@ function buildHoldTask(exercise, sessionIndex, category) {
 		secCap: exercise.secCap,
 		holdStep: exercise.holdStep ?? 5
 	})
-	return {
-		id: exercise.id,
-		icon: exercise.icon,
-		category,
-		phase: scheme.phase,
-		...formatHold(
-			exercise.label,
-			scheme.sec,
-			scheme.sets,
-			exercise.suffix ?? '',
-			scheme.rhythmNote
-		)
-	}
+	return attachGuide(
+		{
+			id: exercise.id,
+			icon: exercise.icon,
+			category,
+			phase: scheme.phase,
+			...formatHold(
+				exercise.label,
+				scheme.sec,
+				scheme.sets,
+				exercise.suffix ?? '',
+				scheme.rhythmNote
+			)
+		},
+		exercise.id
+	)
 }
 
 function buildExerciseTask(exercise, sessionIndex, category) {
@@ -103,15 +117,18 @@ function buildPushTask(sessionIndex, pushId) {
 		repStep: 1
 	})
 
-	return {
-		id: `push-${variant.id}`,
-		icon: '💪',
-		category: '上肢 · 推',
-		phase: scheme.phase,
-		selectable: true,
-		variantId: variant.id,
-		...formatReps(variant.label, scheme.reps, scheme.sets, '', scheme.rhythmNote)
-	}
+	return attachGuide(
+		{
+			id: `push-${variant.id}`,
+			icon: '💪',
+			category: '上肢 · 推',
+			phase: scheme.phase,
+			selectable: true,
+			variantId: variant.id,
+			...formatReps(variant.label, scheme.reps, scheme.sets, '', scheme.rhythmNote)
+		},
+		variant.id
+	)
 }
 
 export function getProgramMeta(totalCheckDays) {
@@ -146,7 +163,7 @@ export function getProgramMeta(totalCheckDays) {
 	}
 }
 
-export function getTodayPlan(totalCheckDays, selectedPushId) {
+export function getTodayPlan(totalCheckDays, selectedPushId, profile) {
 	const sessionIndex = getSessionIndex(totalCheckDays)
 	const pushId = resolvePushVariant(sessionIndex, selectedPushId ?? null).id
 	const tasks = []
@@ -177,10 +194,14 @@ export function getTodayPlan(totalCheckDays, selectedPushId) {
 		)
 	}
 
+	const { totalKcal, durationMin } = assignPlanCalories(tasks, profile, sessionIndex)
+
 	return {
 		sessionIndex,
 		pushId,
 		tasks,
+		estimatedKcal: totalKcal,
+		estimatedDurationMin: durationMin,
 		availablePushVariants: getUnlockedPushVariants(sessionIndex),
 		meta: getProgramMeta(totalCheckDays)
 	}

@@ -10,9 +10,9 @@
 
 					<div class="streak-badge">
 						<span class="streak-num">{{ tier.days }}</span>
-						<span class="streak-label">天连续打卡达成</span>
+						<span class="streak-label">次连续完成达成</span>
 					</div>
-					<p class="current-streak">当前已连续 {{ continueDays }} 天</p>
+					<p class="current-streak">当前已连续完成 {{ continueDays }} 次</p>
 
 					<div class="steps">
 						<p class="steps-title">凭截图兑现</p>

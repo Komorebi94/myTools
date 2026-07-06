@@ -1,4 +1,4 @@
-export const DEFAULT_PAGE_TITLE = '新年快乐 · 跨年倒计时'
+export const DEFAULT_PAGE_TITLE = '生活小工具'
 
 export const ROUTE_TITLES = {
 	HappyNewYear: '新年快乐 · 跨年倒计时',

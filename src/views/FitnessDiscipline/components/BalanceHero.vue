@@ -71,7 +71,7 @@
 							>
 						</li>
 						<li>
-							<span>连续7天</span>
+							<span>累计7次</span>
 							<strong
 								>¥{{ formatMoney(simEarnings.cumulativeBreakdown.streak) }}</strong
 							>

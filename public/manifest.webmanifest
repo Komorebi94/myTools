@@ -1,7 +1,7 @@
 {
-	"name": "新年快乐 · 跨年倒计时",
-	"short_name": "跨年倒计时",
-	"description": "跨年倒计时、烟花与弹幕祝福",
+	"name": "生活小工具",
+	"short_name": "生活小工具",
+	"description": "跨年倒计时、生日祝福、健身打卡与训练计划等生活小工具",
 	"start_url": ".",
 	"display": "standalone",
 	"background_color": "#000000",

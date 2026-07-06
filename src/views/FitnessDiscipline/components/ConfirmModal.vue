@@ -7,7 +7,7 @@
 					<p class="modal-desc">{{ description }}</p>
 					<label v-if="showExtra" class="modal-extra">
 						<input v-model="extraChecked" type="checkbox" />
-						<span>今日超额完成训练（额外 +2 元）</span>
+						<span>今日超额完成训练（额外 +{{ REWARDS.EXTRA_COMPLETE }} 元）</span>
 					</label>
 					<div class="modal-actions">
 						<button type="button" class="btn ghost" @click="$emit('cancel')">
@@ -25,6 +25,7 @@
 
 <script setup>
 	import { ref, watch } from 'vue'
+	import { REWARDS } from '@/constants/fitness'
 
 	const props = defineProps({
 		visible: Boolean,

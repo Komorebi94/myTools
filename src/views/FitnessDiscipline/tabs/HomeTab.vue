@@ -27,27 +27,41 @@
 						/>
 					</div>
 					<span class="progress-hint">
-						小周期第 {{ programMeta.dayInMeso }}/{{ programMeta.mesocycleLength }} 天
+						小周期第 {{ programMeta.dayInMeso }}/{{ programMeta.mesocycleLength }} 次
 						<template v-if="programMeta.daysToStep > 0">
-							· {{ programMeta.daysToStep }} 天后升阶日
+							· {{ programMeta.daysToStep }} 次后升阶日
 						</template>
 						<template v-else>· 今日升阶日</template>
 					</span>
 				</div>
 			</div>
 
-			<ul class="task-list">
-				<li v-for="task in todayPlan.tasks" :key="task.id" class="task-item">
-					<span class="task-icon">{{ task.icon }}</span>
-					<div class="task-body">
-						<span class="task-cat">{{ task.category }}</span>
-						<span class="task-label">{{ task.label }}</span>
-						<span v-if="task.rhythmNote" class="task-rhythm">{{
-							task.rhythmNote
-						}}</span>
+			<div class="metrics-row">
+				<div class="metric">
+					<span class="metric-icon" aria-hidden="true">⏱</span>
+					<div>
+						<span class="metric-label">预计时长</span>
+						<strong>{{ todayPlan.estimatedDurationMin }} 分钟</strong>
 					</div>
-					<span class="task-detail">{{ task.detail }}</span>
-				</li>
+				</div>
+				<div class="metric metric-fire">
+					<span class="metric-icon" aria-hidden="true">🔥</span>
+					<div>
+						<span class="metric-label">预计消耗</span>
+						<strong>约 {{ todayPlan.estimatedKcal }} kcal</strong>
+					</div>
+				</div>
+			</div>
+			<p class="calorie-disclaimer">{{ calorieDisclaimer }}</p>
+
+			<ul class="task-list">
+				<TaskCollapseItem
+					v-for="task in todayPlan.tasks"
+					:key="task.id"
+					:task="task"
+					:expanded="expandedTaskIds.has(task.id)"
+					@toggle="toggleTask(task.id)"
+				/>
 			</ul>
 
 			<div v-if="todayPlan.availablePushVariants.length > 1" class="push-picker">
@@ -89,7 +103,7 @@
 				</li>
 				<li>
 					<span class="tag gain">+{{ programMeta.rewardPreview.streakBonus }}</span>
-					每连续满 7 天
+					每累计完成 7 次
 				</li>
 			</ul>
 		</section>
@@ -136,7 +150,7 @@
 		<section class="stats-grid">
 			<div class="stat-item">
 				<span class="stat-value">{{ state.continueDays }}</span>
-				<span class="stat-label">连续打卡</span>
+				<span class="stat-label">连续完成</span>
 			</div>
 			<div class="stat-item">
 				<span class="stat-value">{{ state.totalCheckDays }}</span>
@@ -168,7 +182,7 @@
 		<ConfirmModal
 			:visible="halfModal"
 			title="确认记录未达标？"
-			description="练到一半、未完成全部任务时可选。不奖励、不扣款，连续天数保留，今日不可再打卡。"
+			description="练到一半、未完成全部任务时可选。不奖励、不扣款，连续完成次数保留，今日不可再打卡。"
 			confirm-text="确认未达标"
 			@confirm="onHalf"
 			@cancel="halfModal = false"
@@ -177,7 +191,7 @@
 		<ConfirmModal
 			:visible="skipModal"
 			title="确认今日缺席？"
-			:description="`确认后将扣除 ${REWARDS.DAILY_SKIP} 元，连续打卡天数清零。该操作今日不可撤销。`"
+			:description="`确认后将扣除 ${REWARDS.DAILY_SKIP} 元，连续完成次数清零。该操作今日不可撤销。`"
 			confirm-text="确认缺席"
 			@confirm="onSkip"
 			@cancel="skipModal = false"
@@ -222,6 +236,7 @@
 	import { FITNESS_DISCIPLINE_KEY } from '../keys'
 	import BalanceHero from '../components/BalanceHero.vue'
 	import ConfirmModal from '../components/ConfirmModal.vue'
+	import TaskCollapseItem from '../components/TaskCollapseItem.vue'
 	const {
 		state,
 		canComplete,
@@ -230,6 +245,7 @@
 		unlockedBreakthroughs,
 		todayPlan,
 		programMeta,
+		calorieDisclaimer,
 		completeCheckIn,
 		skipCheckIn,
 		halfCheckIn,
@@ -241,6 +257,14 @@
 	const halfModal = ref(false)
 	const skipModal = ref(false)
 	const showBreakModal = ref(false)
+	const expandedTaskIds = ref(new Set())
+
+	const toggleTask = (id) => {
+		const next = new Set(expandedTaskIds.value)
+		if (next.has(id)) next.delete(id)
+		else next.add(id)
+		expandedTaskIds.value = next
+	}
 	const breakthroughShort = (id) => {
 		const map = {
 			break_5: '推5',
@@ -405,6 +429,51 @@
 		color: #9a3412;
 	}
 
+	.metrics-row {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.625rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.metric {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.65rem 0.75rem;
+		border-radius: 0.75rem;
+		background: #fff;
+		border: 1px solid #ffedd5;
+	}
+
+	.metric-fire {
+		border-color: #fed7aa;
+		background: linear-gradient(135deg, #fff7ed, #fff);
+	}
+
+	.metric-icon {
+		font-size: 1.125rem;
+	}
+
+	.metric-label {
+		display: block;
+		font-size: 0.6875rem;
+		color: #94a3b8;
+		margin-bottom: 0.1rem;
+	}
+
+	.metric strong {
+		font-size: 0.9375rem;
+		color: #0f172a;
+	}
+
+	.calorie-disclaimer {
+		margin: 0 0 0.875rem;
+		font-size: 0.6875rem;
+		color: #94a3b8;
+		line-height: 1.45;
+	}
+
 	.max-tier {
 		font-size: 0.75rem;
 		color: #c2410c;
@@ -416,54 +485,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
-	}
-
-	.task-item {
-		display: flex;
-		align-items: center;
-		gap: 0.625rem;
-		padding: 0.75rem 0.875rem;
-		border-radius: 0.75rem;
-		background: #f8fafc;
-		border: 1px solid #f1f5f9;
-	}
-
-	.task-icon {
-		font-size: 1.25rem;
-		flex-shrink: 0;
-	}
-
-	.task-body {
-		flex: 1;
-		min-width: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0.1rem;
-	}
-
-	.task-cat {
-		font-size: 0.6875rem;
-		color: #94a3b8;
-		font-weight: 600;
-	}
-
-	.task-label {
-		font-size: 0.875rem;
-		font-weight: 600;
-		color: #0f172a;
-	}
-
-	.task-rhythm {
-		font-size: 0.6875rem;
-		color: #ea580c;
-		font-weight: 500;
-	}
-
-	.task-detail {
-		font-size: 0.75rem;
-		color: #64748b;
-		font-weight: 600;
-		white-space: nowrap;
+		padding: 0;
+		margin: 0;
 	}
 
 	.push-picker {

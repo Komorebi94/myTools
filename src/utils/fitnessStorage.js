@@ -1,6 +1,8 @@
 import { FITNESS_STORAGE_KEY, RECORD_STATUS, SURPRISE_REWARD_TIERS } from '@/constants/fitness'
 import { formatDateKey, getYesterdayKey } from '@/utils/date'
 
+import { normalizeUserProfile } from '@/utils/fitnessCalories'
+
 export { formatDateKey, getYesterdayKey }
 
 export function getDefaultState() {
@@ -18,6 +20,7 @@ export function getDefaultState() {
 		lastCheckDate: '',
 		selectedTraining: 'wall',
 		lastPushVariant: 'wall',
+		userProfile: normalizeUserProfile(),
 		...Object.fromEntries(SURPRISE_REWARD_TIERS.map((t) => [t.id, false]))
 	}
 }
@@ -38,6 +41,8 @@ export function normalizeFitnessState(state) {
 			next[tier.id] = false
 		}
 	}
+
+	next.userProfile = normalizeUserProfile(next.userProfile)
 
 	return next
 }
@@ -83,37 +88,11 @@ export function hasFinishOnDate(recordList, dateKey) {
 	return record?.status === RECORD_STATUS.FINISH
 }
 
-function getYesterdayWorkoutStatus(recordList, yesterdayKey) {
-	return getDayWorkoutRecord(recordList, yesterdayKey)?.status ?? null
-}
-
 /**
- * 跨天结算：若昨日未完成打卡，连续天数清零并可重新领取周奖励
+ * 跨天结算：休息日或未打开 app 不影响连续完成次数；仅「缺席」会清零（见 skipCheckIn）
  */
-export function applyDayRollover(state, todayKey = formatDateKey()) {
-	const next = { ...state }
-
-	if (!next.lastCheckDate || next.lastCheckDate >= todayKey) {
-		return next
-	}
-
-	const yesterdayKey = getYesterdayKey(todayKey)
-
-	if (next.lastCheckDate < yesterdayKey) {
-		next.continueDays = 0
-		next.weekReward_7 = false
-		return next
-	}
-
-	if (next.lastCheckDate === yesterdayKey) {
-		const yesterdayStatus = getYesterdayWorkoutStatus(next.recordList, yesterdayKey)
-		if (yesterdayStatus !== RECORD_STATUS.FINISH && yesterdayStatus !== RECORD_STATUS.HALF) {
-			next.continueDays = 0
-			next.weekReward_7 = false
-		}
-	}
-
-	return next
+export function applyDayRollover(state) {
+	return { ...state }
 }
 
 export function clearFitnessStorage() {

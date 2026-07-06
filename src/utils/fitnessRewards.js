@@ -54,7 +54,7 @@ export function calcStreakBonus(sessionIndex) {
 	return 0
 }
 
-/** 单次完成打卡的全部入账（基础 + 连续 7 天 + 俯卧撑变式进阶） */
+/** 单次完成打卡的全部入账（基础 + 连续 7 次 + 俯卧撑变式进阶） */
 export function calcSessionTotalReward(sessionIndex) {
 	const daily = calcDailyCompleteReward(sessionIndex)
 	let amount = daily.amount
@@ -63,7 +63,7 @@ export function calcSessionTotalReward(sessionIndex) {
 	const streak = calcStreakBonus(sessionIndex)
 	if (streak > 0) {
 		amount += streak
-		parts.push(`连续7天 +${streak}`)
+		parts.push(`连续7次 +${streak}`)
 	}
 
 	if (sessionIndex > 0) {

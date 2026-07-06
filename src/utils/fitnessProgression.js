@@ -69,7 +69,7 @@ export function calcRepScheme(
 
 	const rhythmNote =
 		phase === 'accumulate'
-			? `本周期第 ${pos + 1} 天，+${repStep} 次`
+			? `本周期第 ${pos + 1} 次，+${repStep} 次`
 			: phase === 'consolidate'
 				? '维持次数，打磨动作质量'
 				: sets > baseSets
@@ -114,7 +114,7 @@ export function calcHoldScheme(
 
 	const rhythmNote =
 		phase === 'accumulate'
-			? `本周期第 ${pos + 1} 天，+${holdStep} 秒`
+			? `本周期第 ${pos + 1} 次，+${holdStep} 秒`
 			: phase === 'consolidate'
 				? '维持秒数，核心收紧'
 				: sets > baseSets

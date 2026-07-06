@@ -16,6 +16,13 @@ describe('getDefaultState', () => {
 		expect(state.surprise_180).toBe(false)
 		expect(state.surprise_365).toBe(false)
 	})
+
+	it('includes default user profile', () => {
+		const state = getDefaultState()
+		expect(state.userProfile.weightJin).toBe(105)
+		expect(state.userProfile.heightCm).toBe(163)
+		expect(state.userProfile.weightKg).toBe(52.5)
+	})
 })
 
 describe('formatDateKey', () => {
@@ -31,7 +38,7 @@ describe('getYesterdayKey', () => {
 })
 
 describe('applyDayRollover', () => {
-	it('resets streak when yesterday had no finish', () => {
+	it('keeps streak across rest days without check-in', () => {
 		const state = {
 			...getDefaultState(),
 			continueDays: 5,
@@ -40,8 +47,8 @@ describe('applyDayRollover', () => {
 			recordList: []
 		}
 		const next = applyDayRollover(state, '2026-05-22')
-		expect(next.continueDays).toBe(0)
-		expect(next.weekReward_7).toBe(false)
+		expect(next.continueDays).toBe(5)
+		expect(next.weekReward_7).toBe(true)
 	})
 
 	it('keeps streak when yesterday finished', () => {

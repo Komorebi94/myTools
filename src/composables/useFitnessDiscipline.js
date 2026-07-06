@@ -27,6 +27,7 @@ import {
 	calcSimEarnings,
 	calcStreakBonus
 } from '@/utils/fitnessRewards'
+import { formatCalorieDisclaimer, normalizeUserProfile } from '@/utils/fitnessCalories'
 
 function buildRecord({ date, status, moneyChange, remark, afterMoney }) {
 	return { date, status, moneyChange, remark, afterMoney }
@@ -90,8 +91,16 @@ export function useFitnessDiscipline() {
 		return state.value.selectedTraining
 	})
 
+	const userProfile = computed(() => normalizeUserProfile(state.value.userProfile))
+
+	const calorieDisclaimer = computed(() => formatCalorieDisclaimer(userProfile.value))
+
 	const todayPlan = computed(() =>
-		getTodayPlan(previewSessionIndex.value, pushSelectionForPlan.value)
+		getTodayPlan(
+			previewSessionIndex.value,
+			pushSelectionForPlan.value,
+			userProfile.value
+		)
 	)
 
 	const syncPushVariantToSession = () => {
@@ -116,8 +125,8 @@ export function useFitnessDiscipline() {
 	const liveEarnings = computed(() => calcSimEarnings(state.value.totalCheckDays))
 
 	const streakDaysToBonus = computed(() => {
-		if (state.value.continueDays <= 0) return 7
-		const mod = state.value.continueDays % 7
+		const completed = state.value.totalCheckDays
+		const mod = completed % 7
 		return mod === 0 ? 7 : 7 - mod
 	})
 
@@ -194,7 +203,7 @@ export function useFitnessDiscipline() {
 		if (streakBonus > 0) {
 			moneyChange += streakBonus
 			state.value.weekReward_7 = true
-			remarks.push(`连续打卡7天 +${streakBonus}元`)
+			remarks.push(`连续7次 +${streakBonus}元`)
 		}
 
 		applyMoney(moneyChange)
@@ -329,7 +338,7 @@ export function useFitnessDiscipline() {
 		state.value.lastCheckDate = todayKey.value
 		persist()
 
-		showToast('已记录未达标，连续天数保留，明日可再练')
+		showToast('已记录未达标，连续完成次数保留，下次可再练')
 		return { ok: true }
 	}
 
@@ -380,7 +389,7 @@ export function useFitnessDiscipline() {
 		}
 
 		if (state.value.continueDays < tier.days) {
-			showToast(`尚未连续打卡满 ${tier.days} 天`)
+			showToast(`尚未连续完成 ${tier.days} 次训练`)
 			return { ok: false }
 		}
 
@@ -398,7 +407,7 @@ export function useFitnessDiscipline() {
 			createdAt: now.getTime(),
 			status: RECORD_STATUS.REDEEM,
 			moneyChange: 0,
-			remark: `惊喜奖 · ${tier.label} · 连续${tier.days}天 · 截图兑现 · ${timeStr}`,
+			remark: `惊喜奖 · ${tier.label} · 连续${tier.days}次 · 截图兑现 · ${timeStr}`,
 			afterMoney: state.value.totalMoney
 		})
 		persist()
@@ -411,6 +420,16 @@ export function useFitnessDiscipline() {
 	const dismissSurpriseModal = () => {
 		showSurpriseModal.value = false
 		activeSurpriseTierId.value = null
+	}
+
+	const setUserProfile = ({ heightCm, weightJin }) => {
+		state.value.userProfile = normalizeUserProfile({
+			heightCm: heightCm ?? state.value.userProfile?.heightCm,
+			weightJin: weightJin ?? state.value.userProfile?.weightJin
+		})
+		persist()
+		showToast('体型已更新，卡路里将按新体重重算')
+		return { ok: true }
 	}
 
 	const resetAllData = () => {
@@ -464,6 +483,8 @@ export function useFitnessDiscipline() {
 		sortedRecords,
 		todayPlan,
 		programMeta,
+		userProfile,
+		calorieDisclaimer,
 		isSimMode,
 		simDay,
 		previewSessionIndex,
@@ -476,6 +497,7 @@ export function useFitnessDiscipline() {
 		dismissSurpriseModal,
 		claimBreakthrough,
 		setPushVariant,
+		setUserProfile,
 		resetAllData,
 		exportData,
 		importData,

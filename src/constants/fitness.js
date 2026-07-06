@@ -19,25 +19,26 @@ export const PROGRESSION_CYCLE = {
 }
 
 /**
- * 连续完成 60 课次预估总收益约 1300 元（虚拟金），结构大致为：
- * 每日基础 ~62% · 连续7天 ~12% · 小周期/升阶 ~14% · 动作进阶 ~8% · 放松周 ~4%
+ * 按每月约 20 练次（每周 3–4 天）校准：单次奖励 ×1.5，弥补非每日训练。
+ * 连续完成 60 课次（约 3 个月）预估总收益约 2700 元（虚拟金），结构大致为：
+ * 每次完成 ~62% · 连续7次 ~12% · 小周期/升阶 ~14% · 动作进阶 ~8% · 放松周 ~4%
  */
 export const REWARDS = {
-	DAILY_BASE: 10,
+	DAILY_BASE: 24,
 	DAILY_PER_MESO: 1,
-	DAILY_CAP: 20,
-	DAILY_SKIP: -5,
-	EXTRA_COMPLETE: 5,
-	STREAK_7: 25,
-	STEP_DAY_BONUS: 5,
-	DELOAD_COMPLETE: 10,
-	VARIANT_UPGRADE: 25,
-	MESO_COMPLETE: 10,
-	BREAK_5: 35,
-	BREAK_10: 60,
-	BREAK_SQUAT_30: 25,
-	BREAK_PLANK_90: 25,
-	BREAK_LUNGE_20: 20
+	DAILY_CAP: 48,
+	DAILY_SKIP: -12,
+	EXTRA_COMPLETE: 12,
+	STREAK_7: 60,
+	STEP_DAY_BONUS: 12,
+	DELOAD_COMPLETE: 22,
+	VARIANT_UPGRADE: 60,
+	MESO_COMPLETE: 22,
+	BREAK_5: 75,
+	BREAK_10: 135,
+	BREAK_SQUAT_30: 60,
+	BREAK_PLANK_90: 60,
+	BREAK_LUNGE_20: 45
 }
 
 export const RECORD_STATUS = {
@@ -203,14 +204,14 @@ export const SURPRISE_REWARD_TIERS = [
 export function getSurpriseRewardCopy(tier) {
 	return {
 		title: '🎉 惊喜奖解锁！',
-		subtitle: `${tier.label} · 连续打卡满 ${tier.days} 天`,
+		subtitle: `${tier.label} · 连续完成 ${tier.days} 次训练`,
 		prizeHint: tier.prizeHint,
 		redeemSteps: [
 			'对本弹窗截图并保存',
 			`凭截图按事先约定兑现「${tier.label}」`,
 			'领取对应的线下惊喜礼物'
 		],
-		screenshotTip: '建议截图包含本弹窗与连续打卡天数'
+		screenshotTip: '建议截图包含本弹窗与连续完成次数'
 	}
 }
 

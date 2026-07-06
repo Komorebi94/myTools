@@ -31,12 +31,12 @@ describe('calcStreakBonus', () => {
 })
 
 describe('60 day target', () => {
-	it('continuous 60 sessions totals about 1300', () => {
+	it('continuous 60 sessions totals about 2700', () => {
 		let total = 0
 		for (let s = 0; s < 60; s++) {
 			total += calcSessionTotalReward(s).amount
 		}
-		expect(total).toBeGreaterThanOrEqual(1280)
-		expect(total).toBeLessThanOrEqual(1380)
+		expect(total).toBeGreaterThanOrEqual(2650)
+		expect(total).toBeLessThanOrEqual(2750)
 	})
 })
