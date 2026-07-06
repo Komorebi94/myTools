@@ -47,15 +47,18 @@
 <style scoped lang="scss">
 	.task-item {
 		position: relative;
-		border-radius: 1rem;
-		background: linear-gradient(135deg, #fff, #fff5f7);
-		border: 1.5px solid var(--fit-pink-light, #fce7f3);
+		border-radius: var(--fit-radius-md, 1.375rem);
+		background: linear-gradient(135deg, #fff, var(--fit-cream, #fff9fb));
+		border: 2px dashed var(--fit-pink-light, #fce7f3);
 		overflow: hidden;
-		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+		transition:
+			border-color 0.2s ease,
+			box-shadow 0.2s ease,
+			transform 0.2s var(--fit-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
 
 		&.expanded {
-			border-color: rgba(244, 114, 182, 0.4);
-			box-shadow: 0 4px 16px rgba(244, 114, 182, 0.1);
+			border-color: rgba(249, 168, 212, 0.55);
+			box-shadow: var(--fit-shadow-soft, 0 6px 20px rgba(249, 168, 212, 0.12));
 		}
 	}
 
@@ -75,13 +78,14 @@
 	.task-icon {
 		font-size: 1.375rem;
 		flex-shrink: 0;
-		width: 2.25rem;
-		height: 2.25rem;
+		width: 2.5rem;
+		height: 2.5rem;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		border-radius: 0.75rem;
-		background: var(--fit-pink-light, #fce7f3);
+		border-radius: var(--fit-radius-sm, 0.875rem);
+		background: linear-gradient(135deg, var(--fit-pink-light, #fce7f3), var(--fit-peach-light, #ffedd5));
+		border: 2px dashed rgba(249, 168, 212, 0.35);
 	}
 
 	.task-body {
@@ -100,8 +104,8 @@
 
 	.task-label {
 		font-size: 0.875rem;
-		font-weight: 600;
-		color: #831843;
+		font-weight: 700;
+		color: var(--fit-text-heading, #831843);
 	}
 
 	.task-rhythm {

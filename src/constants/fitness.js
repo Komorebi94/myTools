@@ -1,7 +1,7 @@
 export const FITNESS_STORAGE_KEY = 'fitness_discipline_v2'
 
 export const APP_NAME = '笑笑的存钱罐'
-export const APP_TAGLINE = '积量 · 巩固 · 升阶 · 科学渐进'
+export const APP_TAGLINE = '每天练一点点，罐子里的钱慢慢涨～'
 
 /**
  * 训练节奏（参考常见自重周期化方案）：

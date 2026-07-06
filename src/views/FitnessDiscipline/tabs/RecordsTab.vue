@@ -27,7 +27,7 @@
 		</section>
 
 		<div v-if="!sortedRecords.length" class="empty">
-			<span class="empty-icon">📝</span>
+			<PiggyBankMascot :size="88" :floating="true" class="empty-mascot" />
 			<p>还没有记录哦～</p>
 			<p class="empty-hint">完成打卡或兑换后，明细会出现在这里</p>
 		</div>
@@ -76,6 +76,7 @@
 	import { RECORD_STATUS } from '@/constants/fitness'
 	import { FITNESS_DISCIPLINE_KEY } from '../keys'
 	import RedeemModal from '../components/RedeemModal.vue'
+	import PiggyBankMascot from '../components/PiggyBankMascot.vue'
 
 	const { state, sortedRecords, canRedeem, redeemReward } = inject(FITNESS_DISCIPLINE_KEY)
 
@@ -147,14 +148,13 @@
 		margin-bottom: 0.875rem;
 
 		h2 {
-			font-size: 1.25rem;
-			font-weight: 800;
-			color: #831843;
+			font-size: 1.3125rem;
+			color: var(--fit-text-heading, #831843);
 		}
 
 		p {
 			font-size: 0.8125rem;
-			color: #64748b;
+			color: #78716c;
 			margin-top: 0.25rem;
 			line-height: 1.5;
 		}
@@ -162,9 +162,9 @@
 
 	.card {
 		background: #fff;
-		border-radius: 1.25rem;
-		border: 1.5px solid var(--fit-card-border, rgba(244, 114, 182, 0.18));
-		box-shadow: var(--fit-shadow, 0 8px 28px rgba(244, 114, 182, 0.14));
+		border-radius: var(--fit-radius-lg, 1.75rem);
+		border: 2px dashed var(--fit-card-border, rgba(249, 168, 212, 0.38));
+		box-shadow: var(--fit-shadow, 0 12px 36px rgba(249, 168, 212, 0.2));
 	}
 
 	.redeem-bar {
@@ -189,9 +189,9 @@
 	}
 
 	.redeem-bar-balance {
-		font-size: 1.375rem;
-		font-weight: 800;
-		color: var(--fit-text-accent, #db2777);
+		font-family: var(--fit-font-display, 'ZCOOL KuaiLe', sans-serif);
+		font-size: 1.5rem;
+		color: var(--fit-text-accent, #ec4899);
 		line-height: 1.2;
 	}
 
@@ -204,14 +204,15 @@
 		flex-shrink: 0;
 		padding: 0.625rem 1rem;
 		border: none;
-		border-radius: 1rem;
-		background: linear-gradient(135deg, #fde68a, #fcd34d);
+		border-radius: var(--fit-radius-md, 1.375rem);
+		background: linear-gradient(180deg, #fde68a, #fcd34d);
 		color: #92400e;
-		font-size: 0.875rem;
-		font-weight: 700;
+		font-family: var(--fit-font-display, 'ZCOOL KuaiLe', sans-serif);
+		font-size: 0.9375rem;
 		cursor: pointer;
 		white-space: nowrap;
-		box-shadow: 0 4px 12px rgba(251, 191, 36, 0.35);
+		box-shadow: 0 4px 0 rgba(217, 119, 6, 0.2), 0 8px 16px rgba(251, 191, 36, 0.3);
+		transition: transform 0.2s var(--fit-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
 
 		&:disabled {
 			opacity: 0.45;
@@ -219,19 +220,24 @@
 		}
 
 		&:active:not(:disabled) {
-			transform: scale(0.98);
+			transform: scale(0.96) translateY(2px);
+			box-shadow: 0 2px 0 rgba(217, 119, 6, 0.15);
 		}
 	}
 
 	.empty {
 		text-align: center;
-		padding: 3rem 1rem;
-		color: #94a3b8;
+		padding: 2.5rem 1rem;
+		color: #a8a29e;
 
-		.empty-icon {
-			font-size: 2.5rem;
-			display: block;
+		.empty-mascot {
 			margin-bottom: 0.75rem;
+			opacity: 0.85;
+		}
+
+		p {
+			font-size: 0.9375rem;
+			color: #78716c;
 		}
 
 		.empty-hint {
@@ -249,13 +255,18 @@
 
 	.record-item {
 		background: #fff;
-		border-radius: 1.125rem;
+		border-radius: var(--fit-radius-md, 1.375rem);
 		padding: 1rem;
-		border: 1.5px solid var(--fit-card-border, rgba(244, 114, 182, 0.18));
-		box-shadow: 0 4px 16px rgba(244, 114, 182, 0.08);
+		border: 2px dashed var(--fit-card-border, rgba(249, 168, 212, 0.38));
+		box-shadow: var(--fit-shadow-soft, 0 6px 20px rgba(249, 168, 212, 0.12));
+		transition: transform 0.2s ease;
+
+		&:active {
+			transform: scale(0.99);
+		}
 
 		&.is-redeem {
-			border-color: rgba(251, 191, 36, 0.45);
+			border-color: rgba(251, 191, 36, 0.5);
 			background: linear-gradient(180deg, #fff 0%, #fffbeb 100%);
 		}
 	}

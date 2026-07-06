@@ -25,12 +25,12 @@
 	const petals = ref([])
 	let clearTimer = null
 
-	const PETAL_EMOJIS = ['🌸', '✨', '🎊', '💮', '🌺', '⭐', '🌼', '🎉']
+	const PETAL_EMOJIS = ['🌸', '✨', '🎊', '💮', '🌺', '⭐', '🌼', '🎉', '🪙', '💰', '🐷', '💖']
 	const PETAL_COLORS = ['#f9a8d4', '#fda4af', '#fde68a', '#c4b5fd', '#fbcfe8', '#fed7aa']
 
 	const rand = (min, max) => min + Math.random() * (max - min)
 
-	const spawnPetals = (count = 48) => {
+	const spawnPetals = (count = 56) => {
 		const items = []
 		for (let i = 0; i < count; i++) {
 			const isDot = Math.random() > 0.4

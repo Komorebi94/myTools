@@ -2,8 +2,10 @@
 	<Teleport to="body">
 		<Transition name="modal">
 			<div v-if="visible && tier && copy" class="modal-root" @click.self="$emit('later')">
-				<div class="modal-card surprise" role="dialog" aria-modal="true">
-					<div class="confetti" aria-hidden="true">🎊</div>
+				<div class="modal-card surprise fit-sticker-card" role="dialog" aria-modal="true">
+					<span class="card-deco card-deco--tl" aria-hidden="true">🎊</span>
+					<span class="card-deco card-deco--tr" aria-hidden="true">🎉</span>
+					<PiggyBankMascot :size="64" :happy="true" :floating="false" class="surprise-mascot" />
 					<h3>{{ copy.title }}</h3>
 					<p class="subtitle">{{ copy.subtitle }}</p>
 					<p class="prize">{{ copy.prizeHint }}</p>
@@ -41,6 +43,7 @@
 <script setup>
 	import { computed } from 'vue'
 	import { getSurpriseRewardCopy } from '@/constants/fitness'
+	import PiggyBankMascot from './PiggyBankMascot.vue'
 
 	const props = defineProps({
 		visible: Boolean,
@@ -62,8 +65,8 @@
 		align-items: center;
 		justify-content: center;
 		padding: 1.5rem;
-		background: rgba(15, 23, 42, 0.5);
-		backdrop-filter: blur(6px);
+		background: rgba(131, 24, 67, 0.35);
+		backdrop-filter: blur(8px);
 	}
 
 	.modal-card.surprise {
@@ -71,29 +74,19 @@
 		width: 100%;
 		max-width: 21rem;
 		padding: 1.5rem 1.25rem 1.25rem;
-		border-radius: 1.375rem;
-		background: linear-gradient(165deg, #fff 0%, #fff7ed 100%);
-		box-shadow:
-			0 24px 48px rgba(234, 88, 12, 0.22),
-			0 0 0 1px rgba(251, 146, 60, 0.2);
 		text-align: center;
-		overflow: hidden;
+		overflow: visible;
+		background: linear-gradient(165deg, #fff 0%, var(--fit-peach-light, #ffedd5) 100%);
 
 		h3 {
-			font-size: 1.25rem;
-			font-weight: 800;
+			font-size: 1.3125rem;
 			color: #9a3412;
 			margin-bottom: 0.35rem;
 		}
 	}
 
-	.confetti {
-		position: absolute;
-		top: 0.75rem;
-		right: 1rem;
-		font-size: 1.75rem;
-		opacity: 0.9;
-		pointer-events: none;
+	.surprise-mascot {
+		margin: 0 auto 0.5rem;
 	}
 
 	.subtitle {
@@ -114,16 +107,18 @@
 		flex-direction: column;
 		align-items: center;
 		padding: 0.75rem 1.5rem;
-		border-radius: 1rem;
-		background: linear-gradient(135deg, #fb923c, #ea580c);
-		box-shadow: 0 8px 20px rgba(234, 88, 12, 0.35);
+		border-radius: var(--fit-radius-md, 1.375rem);
+		background: linear-gradient(180deg, #fdba74, #fb923c, #f472b6);
+		box-shadow: var(--fit-shadow-candy, 0 6px 0 rgba(236, 72, 153, 0.22));
+		border: 2px dashed rgba(255, 255, 255, 0.45);
 	}
 
 	.streak-num {
-		font-size: 2.25rem;
-		font-weight: 800;
+		font-family: var(--fit-font-display, 'ZCOOL KuaiLe', sans-serif);
+		font-size: 2.375rem;
 		color: #fff;
 		line-height: 1.1;
+		text-shadow: 0 2px 4px rgba(154, 52, 18, 0.25);
 	}
 
 	.streak-label {
@@ -142,9 +137,9 @@
 	.steps {
 		text-align: left;
 		padding: 0.875rem;
-		border-radius: 0.875rem;
+		border-radius: var(--fit-radius-sm, 0.875rem);
 		background: #fff;
-		border: 1px solid #fed7aa;
+		border: 2px dashed #fed7aa;
 		margin-bottom: 1rem;
 	}
 
@@ -184,20 +179,27 @@
 		width: 100%;
 		padding: 0.75rem 1rem;
 		border: none;
-		border-radius: 0.75rem;
+		border-radius: var(--fit-radius-md, 1.375rem);
+		font-family: var(--fit-font-display, 'ZCOOL KuaiLe', sans-serif);
 		font-size: 0.9375rem;
-		font-weight: 600;
 		cursor: pointer;
+		transition: transform 0.2s var(--fit-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
+
+		&:active {
+			transform: scale(0.96);
+		}
 
 		&.ghost {
-			background: #f1f5f9;
-			color: #475569;
+			background: var(--fit-cream, #fff9fb);
+			color: #78716c;
+			border: 2px dashed rgba(249, 168, 212, 0.35);
 		}
 
 		&.primary {
-			background: linear-gradient(135deg, #f59e0b, #ea580c);
+			background: linear-gradient(180deg, #fde68a, #fb923c, #f472b6);
 			color: #fff;
-			box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+			text-shadow: 0 1px 2px rgba(154, 52, 18, 0.2);
+			box-shadow: var(--fit-shadow-candy, 0 6px 0 rgba(236, 72, 153, 0.22));
 		}
 	}
 

@@ -2,7 +2,8 @@
 	<Teleport to="body">
 		<Transition name="modal">
 			<div v-if="visible" class="modal-root" @click.self="$emit('cancel')">
-				<div class="modal-card" role="dialog" aria-modal="true">
+				<div class="modal-card fit-sticker-card" role="dialog" aria-modal="true">
+					<span class="card-deco card-deco--tr" aria-hidden="true">💭</span>
 					<h3 class="modal-title">{{ title }}</h3>
 					<p class="modal-desc">{{ description }}</p>
 					<label v-if="showExtra" class="modal-extra">
@@ -10,9 +11,7 @@
 						<span>今日超额完成训练（额外 +{{ REWARDS.EXTRA_COMPLETE }} 元）</span>
 					</label>
 					<div class="modal-actions">
-						<button type="button" class="btn ghost" @click="$emit('cancel')">
-							取消
-						</button>
+						<button type="button" class="btn ghost" @click="$emit('cancel')">取消</button>
 						<button type="button" class="btn primary" @click="onConfirm">
 							{{ confirmText }}
 						</button>
@@ -60,31 +59,26 @@
 		align-items: center;
 		justify-content: center;
 		padding: 1.5rem;
-		background: rgba(131, 24, 67, 0.35);
-		backdrop-filter: blur(6px);
+		background: rgba(131, 24, 67, 0.32);
+		backdrop-filter: blur(8px);
 	}
 
 	.modal-card {
 		width: 100%;
 		max-width: 20rem;
 		padding: 1.5rem;
-		border-radius: 1.5rem;
-		background: #fff;
-		border: 1.5px solid rgba(244, 114, 182, 0.2);
-		box-shadow: 0 24px 48px rgba(244, 114, 182, 0.2);
 	}
 
 	.modal-title {
-		font-size: 1.125rem;
-		font-weight: 700;
-		color: #831843;
+		font-size: 1.1875rem;
+		color: var(--fit-text-heading, #831843);
 		margin-bottom: 0.5rem;
 	}
 
 	.modal-desc {
 		font-size: 0.875rem;
-		line-height: 1.6;
-		color: #64748b;
+		line-height: 1.65;
+		color: #78716c;
 		margin-bottom: 1rem;
 	}
 
@@ -93,13 +87,19 @@
 		align-items: flex-start;
 		gap: 0.5rem;
 		font-size: 0.8125rem;
-		color: #334155;
+		color: #57534e;
 		margin-bottom: 1.25rem;
 		cursor: pointer;
+		padding: 0.625rem;
+		border-radius: var(--fit-radius-sm, 0.875rem);
+		background: var(--fit-cream, #fff9fb);
+		border: 2px dashed var(--fit-pink-light, #fce7f3);
 
 		input {
 			margin-top: 0.15rem;
-			accent-color: #f472b6;
+			accent-color: var(--fit-pink, #f9a8d4);
+			width: 1rem;
+			height: 1rem;
 		}
 	}
 
@@ -112,37 +112,36 @@
 		flex: 1;
 		padding: 0.75rem 1rem;
 		border: none;
-		border-radius: 1rem;
+		border-radius: var(--fit-radius-md, 1.375rem);
+		font-family: var(--fit-font-display, 'ZCOOL KuaiLe', sans-serif);
 		font-size: 0.9375rem;
-		font-weight: 600;
 		cursor: pointer;
-		transition:
-			transform 0.15s ease,
-			opacity 0.15s ease;
+		transition: transform 0.2s var(--fit-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
 
 		&:active {
-			transform: scale(0.97);
+			transform: scale(0.96);
 		}
 
 		&.ghost {
-			background: #fff5f7;
-			color: #64748b;
-			border: 1.5px solid rgba(244, 114, 182, 0.2);
+			background: var(--fit-cream, #fff9fb);
+			color: #78716c;
+			border: 2px dashed rgba(249, 168, 212, 0.35);
 		}
 
 		&.primary {
-			background: linear-gradient(135deg, #f9a8d4, #f472b6, #fb923c);
+			background: linear-gradient(180deg, #fbcfe8, var(--fit-pink, #f9a8d4), var(--fit-peach, #fdba74));
 			color: #fff;
-			box-shadow: 0 6px 20px rgba(244, 114, 182, 0.35);
+			text-shadow: 0 1px 2px rgba(190, 24, 93, 0.2);
+			box-shadow: var(--fit-shadow-candy, 0 6px 0 rgba(236, 72, 153, 0.22));
 		}
 	}
 
 	.modal-enter-active,
 	.modal-leave-active {
-		transition: opacity 0.2s ease;
+		transition: opacity 0.25s ease;
 
 		.modal-card {
-			transition: transform 0.2s ease;
+			transition: transform 0.25s var(--fit-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
 		}
 	}
 
@@ -151,7 +150,7 @@
 		opacity: 0;
 
 		.modal-card {
-			transform: scale(0.95) translateY(8px);
+			transform: scale(0.9) translateY(12px);
 		}
 	}
 </style>

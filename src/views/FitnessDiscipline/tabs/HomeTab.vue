@@ -2,10 +2,12 @@
 	<div class="home-tab">
 		<BalanceHero />
 
-		<section class="card tasks-card">
+		<section class="card tasks-card fit-sticker-card">
+			<span class="card-deco card-deco--tl" aria-hidden="true">✨</span>
+			<span class="card-deco card-deco--tr" aria-hidden="true">🌸</span>
 			<div class="card-head">
 				<h2>🏋️ 今日训练任务</h2>
-				<span class="badge">{{ programMeta.tierLabel }}</span>
+				<span class="badge fit-pill-badge">{{ programMeta.tierLabel }}</span>
 			</div>
 
 			<div class="phase-bar">
@@ -19,7 +21,7 @@
 					<span class="phase-name">{{ programMeta.phaseName }}</span>
 					<span class="phase-desc">{{ programMeta.phaseDesc }}</span>
 				</div>
-				<div class="progress-wrap">
+				<div class="progress-wrap fit-progress-cute">
 					<div class="progress-track">
 						<div
 							class="progress-fill"
@@ -81,7 +83,8 @@
 			</div>
 		</section>
 
-		<section class="card rules-mini">
+		<section class="card rules-mini fit-sticker-card">
+			<span class="card-deco card-deco--bl" aria-hidden="true">🎁</span>
 			<h3>🎁 今日奖惩速览</h3>
 			<ul>
 				<li>
@@ -111,7 +114,7 @@
 		<section class="actions">
 			<button
 				type="button"
-				class="action-btn complete"
+				class="fit-candy-btn primary"
 				:disabled="!canComplete || isSimMode"
 				@click="openCompleteModal"
 			>
@@ -120,7 +123,7 @@
 			</button>
 			<button
 				type="button"
-				class="action-btn half"
+				class="fit-candy-btn soft"
 				:disabled="!canHalf || isSimMode"
 				@click="openHalfModal"
 			>
@@ -129,7 +132,7 @@
 			</button>
 			<button
 				type="button"
-				class="action-btn skip"
+				class="fit-candy-btn ghost"
 				:disabled="!canSkip || isSimMode"
 				@click="openSkipModal"
 			>
@@ -138,7 +141,7 @@
 			</button>
 			<button
 				type="button"
-				class="action-btn break"
+				class="fit-candy-btn accent"
 				:disabled="isSimMode"
 				@click="showBreakModal = true"
 			>
@@ -319,12 +322,12 @@
 		gap: 1rem;
 	}
 
-	.card {
+	.card:not(.fit-sticker-card) {
 		background: #fff;
-		border-radius: 1.375rem;
+		border-radius: var(--fit-radius-lg, 1.75rem);
 		padding: 1.125rem;
-		border: 1.5px solid var(--fit-card-border, rgba(244, 114, 182, 0.18));
-		box-shadow: var(--fit-shadow, 0 8px 28px rgba(244, 114, 182, 0.14));
+		border: 2px dashed var(--fit-card-border, rgba(249, 168, 212, 0.38));
+		box-shadow: var(--fit-shadow, 0 12px 36px rgba(249, 168, 212, 0.2));
 	}
 
 	.card-head {
@@ -334,28 +337,17 @@
 		margin-bottom: 0.75rem;
 
 		h2 {
-			font-size: 1rem;
-			font-weight: 700;
-			color: #831843;
+			font-size: 1.0625rem;
+			color: var(--fit-text-heading, #831843);
 		}
-	}
-
-	.badge {
-		font-size: 0.6875rem;
-		padding: 0.25rem 0.6rem;
-		border-radius: 999px;
-		background: linear-gradient(135deg, var(--fit-pink-light, #fce7f3), var(--fit-peach-light, #ffedd5));
-		color: var(--fit-text-accent, #db2777);
-		font-weight: 700;
-		border: 1px solid rgba(244, 114, 182, 0.25);
 	}
 
 	.phase-bar {
 		margin-bottom: 1rem;
 		padding: 0.875rem;
-		border-radius: 1rem;
-		background: linear-gradient(135deg, #fff5f7, var(--fit-pink-light, #fce7f3));
-		border: 1px dashed rgba(244, 114, 182, 0.25);
+		border-radius: var(--fit-radius-md, 1.375rem);
+		background: linear-gradient(135deg, var(--fit-cream, #fff9fb), var(--fit-pink-light, #fce7f3));
+		border: 2px dashed rgba(249, 168, 212, 0.35);
 	}
 
 	.rhythm-row {
@@ -413,22 +405,6 @@
 		color: var(--fit-text-accent, #db2777);
 	}
 
-	.progress-track {
-		height: 8px;
-		border-radius: 999px;
-		background: rgba(244, 114, 182, 0.15);
-		overflow: hidden;
-		margin-bottom: 0.35rem;
-	}
-
-	.progress-fill {
-		height: 100%;
-		border-radius: 999px;
-		background: linear-gradient(90deg, #f9a8d4, var(--fit-pink, #f472b6), var(--fit-peach, #fb923c));
-		box-shadow: 0 0 8px rgba(244, 114, 182, 0.45);
-		transition: width 0.35s ease;
-	}
-
 	.progress-hint {
 		font-size: 0.6875rem;
 		color: var(--fit-text-warm, #be185d);
@@ -446,9 +422,9 @@
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.65rem 0.75rem;
-		border-radius: 1rem;
+		border-radius: var(--fit-radius-md, 1.375rem);
 		background: #fff;
-		border: 1.5px solid var(--fit-pink-light, #fce7f3);
+		border: 2px dashed var(--fit-pink-light, #fce7f3);
 	}
 
 	.metric-fire {
@@ -514,8 +490,8 @@
 
 	.pick-chip {
 		padding: 0.4rem 0.75rem;
-		border: 1.5px solid var(--fit-pink-light, #fce7f3);
-		border-radius: 999px;
+		border: 2px dashed var(--fit-pink-light, #fce7f3);
+		border-radius: var(--fit-radius-pill, 999px);
 		background: #fff;
 		font-size: 0.75rem;
 		font-weight: 600;
@@ -584,56 +560,6 @@
 		gap: 0.625rem;
 	}
 
-	.action-btn {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.5rem;
-		padding: 0.9375rem 1rem;
-		border: none;
-		border-radius: 1.125rem;
-		font-size: 0.9375rem;
-		font-weight: 700;
-		cursor: pointer;
-		transition:
-			transform 0.15s,
-			opacity 0.15s,
-			box-shadow 0.15s;
-
-		&:active:not(:disabled) {
-			transform: scale(0.97);
-		}
-
-		&:disabled {
-			opacity: 0.45;
-			cursor: not-allowed;
-		}
-
-		&.complete {
-			background: linear-gradient(135deg, #f9a8d4, var(--fit-pink, #f472b6), var(--fit-peach, #fb923c));
-			color: #fff;
-			box-shadow: 0 8px 24px rgba(244, 114, 182, 0.4);
-		}
-
-		&.half {
-			background: #fff;
-			color: #b45309;
-			border: 1.5px solid #fde68a;
-		}
-
-		&.skip {
-			background: #fff;
-			color: #dc2626;
-			border: 1.5px solid #fecaca;
-		}
-
-		&.break {
-			background: linear-gradient(135deg, #fff, var(--fit-lavender, #ede9fe));
-			color: #7c3aed;
-			border: 1.5px solid #ddd6fe;
-		}
-	}
-
 	.action-icon {
 		font-size: 1.25rem;
 		line-height: 1;
@@ -647,11 +573,11 @@
 
 	.stat-item {
 		background: #fff;
-		border-radius: 1.125rem;
+		border-radius: var(--fit-radius-md, 1.375rem);
 		padding: 0.875rem;
 		text-align: center;
-		border: 1.5px solid var(--fit-card-border, rgba(244, 114, 182, 0.18));
-		box-shadow: 0 4px 16px rgba(244, 114, 182, 0.08);
+		border: 2px dashed var(--fit-card-border, rgba(249, 168, 212, 0.38));
+		box-shadow: var(--fit-shadow-soft, 0 6px 20px rgba(249, 168, 212, 0.12));
 
 		&.wide {
 			grid-column: 1 / -1;
@@ -665,9 +591,9 @@
 
 	.stat-value {
 		display: block;
-		font-size: 1.5rem;
-		font-weight: 800;
-		color: var(--fit-text-accent, #db2777);
+		font-family: var(--fit-font-display, 'ZCOOL KuaiLe', sans-serif);
+		font-size: 1.625rem;
+		color: var(--fit-text-accent, #ec4899);
 		line-height: 1.2;
 	}
 
@@ -707,8 +633,8 @@
 		align-items: flex-end;
 		justify-content: center;
 		padding: 1rem;
-		background: rgba(131, 24, 67, 0.35);
-		backdrop-filter: blur(4px);
+		background: rgba(131, 24, 67, 0.32);
+		backdrop-filter: blur(6px);
 	}
 
 	.break-modal {
@@ -717,14 +643,13 @@
 		max-height: 70vh;
 		overflow-y: auto;
 		padding: 1.25rem;
-		border-radius: 1.5rem 1.5rem 0 0;
-		background: #fff;
-		border: 1.5px solid var(--fit-card-border, rgba(244, 114, 182, 0.18));
+		border-radius: var(--fit-radius-xl, 2rem) var(--fit-radius-xl, 2rem) 0 0;
+		background: linear-gradient(180deg, #fff 0%, var(--fit-cream, #fff9fb) 100%);
+		border: 2px dashed var(--fit-card-border, rgba(249, 168, 212, 0.38));
 
 		h3 {
-			font-size: 1.0625rem;
-			font-weight: 700;
-			color: #831843;
+			font-size: 1.125rem;
+			color: var(--fit-text-heading, #831843);
 		}
 
 		p {

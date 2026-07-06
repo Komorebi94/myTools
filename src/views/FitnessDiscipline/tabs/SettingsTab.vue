@@ -223,24 +223,22 @@
 	}
 
 	.tab-header h2 {
-		font-size: 1.25rem;
-		font-weight: 800;
-		color: #831843;
+		font-size: 1.3125rem;
+		color: var(--fit-text-heading, #831843);
 		margin-bottom: 1rem;
 	}
 
 	.card {
 		background: #fff;
-		border-radius: 1.25rem;
+		border-radius: var(--fit-radius-lg, 1.75rem);
 		padding: 1.125rem;
 		margin-bottom: 0.875rem;
-		border: 1.5px solid var(--fit-card-border, rgba(244, 114, 182, 0.18));
-		box-shadow: var(--fit-shadow, 0 8px 28px rgba(244, 114, 182, 0.14));
+		border: 2px dashed var(--fit-card-border, rgba(249, 168, 212, 0.38));
+		box-shadow: var(--fit-shadow, 0 12px 36px rgba(249, 168, 212, 0.2));
 
 		h3 {
 			font-size: 0.9375rem;
-			font-weight: 700;
-			color: #831843;
+			color: var(--fit-text-heading, #831843);
 			margin-bottom: 0.75rem;
 		}
 	}
@@ -294,12 +292,12 @@
 
 		input {
 			padding: 0.55rem 0.65rem;
-			border: 1.5px solid var(--fit-pink-light, #fce7f3);
-			border-radius: 0.85rem;
+			border: 2px dashed var(--fit-pink-light, #fce7f3);
+			border-radius: var(--fit-radius-sm, 0.875rem);
 			font-size: 0.875rem;
 			font-weight: 600;
-			color: #831843;
-			background: #fff5f7;
+			color: var(--fit-text-heading, #831843);
+			background: var(--fit-cream, #fff9fb);
 		}
 	}
 
@@ -343,14 +341,19 @@
 	.backup-btn {
 		flex: 1;
 		padding: 0.6rem 0.5rem;
-		border-radius: 0.85rem;
-		border: 1.5px solid var(--fit-pink-light, #fce7f3);
-		background: #fff5f7;
+		border-radius: var(--fit-radius-sm, 0.875rem);
+		border: 2px dashed var(--fit-pink-light, #fce7f3);
+		background: var(--fit-cream, #fff9fb);
 		font-size: 0.8125rem;
 		font-weight: 700;
-		color: #831843;
+		color: var(--fit-text-heading, #831843);
 		cursor: pointer;
 		text-align: center;
+		transition: transform 0.2s var(--fit-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
+
+		&:active {
+			transform: scale(0.97);
+		}
 	}
 
 	.import-label {
@@ -368,17 +371,18 @@
 	.reset-btn {
 		width: 100%;
 		padding: 0.875rem;
-		border: none;
-		border-radius: 1rem;
+		border-radius: var(--fit-radius-md, 1.375rem);
 		background: #fff1f2;
 		color: #e11d48;
+		font-family: var(--fit-font-display, 'ZCOOL KuaiLe', sans-serif);
 		font-size: 0.9375rem;
-		font-weight: 700;
 		cursor: pointer;
-		border: 1.5px solid #fecdd3;
+		border: 2px dashed #fecdd3;
+		transition: transform 0.2s ease;
 
 		&:active {
 			background: #ffe4e6;
+			transform: scale(0.98);
 		}
 	}
 

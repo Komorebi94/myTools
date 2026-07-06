@@ -2,7 +2,8 @@
 	<Teleport to="body">
 		<Transition name="modal">
 			<div v-if="visible" class="modal-root" @click.self="$emit('cancel')">
-				<div class="modal-card" role="dialog" aria-modal="true">
+				<div class="modal-card fit-sticker-card" role="dialog" aria-modal="true">
+					<span class="card-deco card-deco--tr" aria-hidden="true">🪙</span>
 					<h3>兑换奖励</h3>
 					<p class="modal-desc">
 						从存钱罐扣除对应金额，记入台账。当前余额
@@ -30,12 +31,8 @@
 						/>
 					</label>
 					<div class="modal-actions">
-						<button type="button" class="btn ghost" @click="$emit('cancel')">
-							取消
-						</button>
-						<button type="button" class="btn primary" @click="onConfirm">
-							确认兑换
-						</button>
+						<button type="button" class="btn ghost" @click="$emit('cancel')">取消</button>
+						<button type="button" class="btn primary" @click="onConfirm">确认兑换</button>
 					</div>
 				</div>
 			</div>
@@ -85,34 +82,30 @@
 		align-items: center;
 		justify-content: center;
 		padding: 1.5rem;
-		background: rgba(15, 23, 42, 0.45);
-		backdrop-filter: blur(4px);
+		background: rgba(131, 24, 67, 0.32);
+		backdrop-filter: blur(8px);
 	}
 
 	.modal-card {
 		width: 100%;
 		max-width: 20rem;
 		padding: 1.5rem;
-		border-radius: 1.25rem;
-		background: #fff;
-		box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
 
 		h3 {
-			font-size: 1.125rem;
-			font-weight: 700;
-			color: #0f172a;
+			font-size: 1.1875rem;
+			color: var(--fit-text-heading, #831843);
 			margin-bottom: 0.5rem;
 		}
 	}
 
 	.modal-desc {
 		font-size: 0.8125rem;
-		line-height: 1.6;
-		color: #64748b;
+		line-height: 1.65;
+		color: #78716c;
 		margin-bottom: 1rem;
 
 		strong {
-			color: #c2410c;
+			color: var(--fit-text-accent, #ec4899);
 		}
 	}
 
@@ -122,18 +115,20 @@
 		gap: 0.35rem;
 		margin-bottom: 0.875rem;
 		font-size: 0.8125rem;
-		color: #475569;
+		color: #57534e;
 
 		input {
 			padding: 0.75rem 0.875rem;
-			border: 1.5px solid #e2e8f0;
-			border-radius: 0.75rem;
+			border: 2px dashed var(--fit-pink-light, #fce7f3);
+			border-radius: var(--fit-radius-sm, 0.875rem);
 			font-size: 1rem;
-			color: #0f172a;
+			color: var(--fit-text-heading, #831843);
+			background: var(--fit-cream, #fff9fb);
 
 			&:focus {
 				outline: none;
-				border-color: #fb923c;
+				border-color: var(--fit-peach, #fdba74);
+				box-shadow: 0 0 0 3px rgba(253, 186, 116, 0.25);
 			}
 		}
 	}
@@ -148,28 +143,35 @@
 		flex: 1;
 		padding: 0.75rem 1rem;
 		border: none;
-		border-radius: 0.75rem;
+		border-radius: var(--fit-radius-md, 1.375rem);
+		font-family: var(--fit-font-display, 'ZCOOL KuaiLe', sans-serif);
 		font-size: 0.9375rem;
-		font-weight: 600;
 		cursor: pointer;
+		transition: transform 0.2s var(--fit-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
+
+		&:active {
+			transform: scale(0.96);
+		}
 
 		&.ghost {
-			background: #f1f5f9;
-			color: #475569;
+			background: var(--fit-cream, #fff9fb);
+			color: #78716c;
+			border: 2px dashed rgba(249, 168, 212, 0.35);
 		}
 
 		&.primary {
-			background: linear-gradient(135deg, #fb923c, #ea580c);
-			color: #fff;
+			background: linear-gradient(180deg, #fde68a, #fcd34d, #fb923c);
+			color: #92400e;
+			box-shadow: 0 4px 0 rgba(217, 119, 6, 0.2);
 		}
 	}
 
 	.modal-enter-active,
 	.modal-leave-active {
-		transition: opacity 0.2s ease;
+		transition: opacity 0.25s ease;
 
 		.modal-card {
-			transition: transform 0.2s ease;
+			transition: transform 0.25s var(--fit-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
 		}
 	}
 
@@ -178,7 +180,7 @@
 		opacity: 0;
 
 		.modal-card {
-			transform: scale(0.95) translateY(8px);
+			transform: scale(0.9) translateY(12px);
 		}
 	}
 </style>

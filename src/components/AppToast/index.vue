@@ -54,10 +54,11 @@
 	}
 
 	.app-toast.fitness {
-		background: rgba(131, 24, 67, 0.92);
-		color: #fff1f2;
-		border: 1px solid rgba(251, 207, 232, 0.35);
-		box-shadow: 0 8px 28px rgba(244, 114, 182, 0.35);
+		font-family: var(--fit-font-display, 'ZCOOL KuaiLe', 'PingFang SC', sans-serif);
+		background: linear-gradient(135deg, rgba(251, 207, 232, 0.96), rgba(249, 168, 212, 0.96));
+		color: var(--fit-text-heading, #831843);
+		border: 2px dashed rgba(255, 255, 255, 0.65);
+		box-shadow: var(--fit-shadow, 0 12px 36px rgba(249, 168, 212, 0.35));
 	}
 
 	.app-toast.lujx {
