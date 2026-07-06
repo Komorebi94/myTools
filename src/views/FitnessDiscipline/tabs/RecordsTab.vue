@@ -1,7 +1,7 @@
 <template>
 	<div class="records-tab">
 		<header class="tab-header">
-			<h2>打卡台账</h2>
+			<h2>💰 打卡台账</h2>
 			<p>
 				共 {{ sortedRecords.length }} 条 · 打卡 {{ workoutRecordCount }} · 兑换
 				{{ redeemRecordCount }}
@@ -27,8 +27,8 @@
 		</section>
 
 		<div v-if="!sortedRecords.length" class="empty">
-			<span class="empty-icon">📋</span>
-			<p>还没有记录</p>
+			<span class="empty-icon">📝</span>
+			<p>还没有记录哦～</p>
 			<p class="empty-hint">完成打卡或兑换后，明细会出现在这里</p>
 		</div>
 
@@ -149,7 +149,7 @@
 		h2 {
 			font-size: 1.25rem;
 			font-weight: 800;
-			color: #0f172a;
+			color: #831843;
 		}
 
 		p {
@@ -162,8 +162,9 @@
 
 	.card {
 		background: #fff;
-		border-radius: 1rem;
-		box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+		border-radius: 1.25rem;
+		border: 1.5px solid var(--fit-card-border, rgba(244, 114, 182, 0.18));
+		box-shadow: var(--fit-shadow, 0 8px 28px rgba(244, 114, 182, 0.14));
 	}
 
 	.redeem-bar {
@@ -190,7 +191,7 @@
 	.redeem-bar-balance {
 		font-size: 1.375rem;
 		font-weight: 800;
-		color: #c2410c;
+		color: var(--fit-text-accent, #db2777);
 		line-height: 1.2;
 	}
 
@@ -203,13 +204,14 @@
 		flex-shrink: 0;
 		padding: 0.625rem 1rem;
 		border: none;
-		border-radius: 0.75rem;
-		background: linear-gradient(135deg, #fef3c7, #fde68a);
+		border-radius: 1rem;
+		background: linear-gradient(135deg, #fde68a, #fcd34d);
 		color: #92400e;
 		font-size: 0.875rem;
 		font-weight: 700;
 		cursor: pointer;
 		white-space: nowrap;
+		box-shadow: 0 4px 12px rgba(251, 191, 36, 0.35);
 
 		&:disabled {
 			opacity: 0.45;
@@ -247,12 +249,13 @@
 
 	.record-item {
 		background: #fff;
-		border-radius: 0.875rem;
+		border-radius: 1.125rem;
 		padding: 1rem;
-		box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05);
+		border: 1.5px solid var(--fit-card-border, rgba(244, 114, 182, 0.18));
+		box-shadow: 0 4px 16px rgba(244, 114, 182, 0.08);
 
 		&.is-redeem {
-			border: 1px solid #fde68a;
+			border-color: rgba(251, 191, 36, 0.45);
 			background: linear-gradient(180deg, #fff 0%, #fffbeb 100%);
 		}
 	}

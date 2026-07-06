@@ -54,9 +54,10 @@
 	}
 
 	.app-toast.fitness {
-		background: rgba(15, 23, 42, 0.92);
-		color: #f8fafc;
-		border: 1px solid rgba(255, 255, 255, 0.08);
+		background: rgba(131, 24, 67, 0.92);
+		color: #fff1f2;
+		border: 1px solid rgba(251, 207, 232, 0.35);
+		box-shadow: 0 8px 28px rgba(244, 114, 182, 0.35);
 	}
 
 	.app-toast.lujx {

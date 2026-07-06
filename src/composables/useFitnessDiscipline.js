@@ -38,6 +38,7 @@ export function useFitnessDiscipline() {
 	const state = ref(getDefaultState())
 	const { todayKey, refreshToday } = useTodayKey()
 	const toast = ref('')
+	const celebrationTick = ref(0)
 	const showSurpriseModal = ref(false)
 	const activeSurpriseTierId = ref(null)
 	let toastTimer = null
@@ -225,6 +226,7 @@ export function useFitnessDiscipline() {
 		persist()
 
 		showToast(`打卡成功！今日 +${moneyChange} 元`)
+		celebrationTick.value += 1
 
 		const justReached = SURPRISE_REWARD_TIERS.find(
 			(tier) => newContinue === tier.days && !state.value[tier.id]
@@ -468,6 +470,7 @@ export function useFitnessDiscipline() {
 		state,
 		todayKey,
 		toast,
+		celebrationTick,
 		showSurpriseModal,
 		activeSurpriseTier,
 		todayRecord,

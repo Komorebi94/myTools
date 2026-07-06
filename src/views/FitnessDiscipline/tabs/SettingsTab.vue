@@ -1,7 +1,7 @@
 <template>
 	<div class="settings-tab">
 		<header class="tab-header">
-			<h2>规则与设置</h2>
+			<h2>📖 规则与设置</h2>
 		</header>
 
 		<section class="card">
@@ -225,21 +225,22 @@
 	.tab-header h2 {
 		font-size: 1.25rem;
 		font-weight: 800;
-		color: #0f172a;
+		color: #831843;
 		margin-bottom: 1rem;
 	}
 
 	.card {
 		background: #fff;
-		border-radius: 1rem;
+		border-radius: 1.25rem;
 		padding: 1.125rem;
 		margin-bottom: 0.875rem;
-		box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05);
+		border: 1.5px solid var(--fit-card-border, rgba(244, 114, 182, 0.18));
+		box-shadow: var(--fit-shadow, 0 8px 28px rgba(244, 114, 182, 0.14));
 
 		h3 {
 			font-size: 0.9375rem;
 			font-weight: 700;
-			color: #0f172a;
+			color: #831843;
 			margin-bottom: 0.75rem;
 		}
 	}
@@ -251,7 +252,7 @@
 		margin-bottom: 0.75rem;
 
 		strong {
-			color: #c2410c;
+			color: var(--fit-text-accent, #db2777);
 		}
 	}
 
@@ -293,12 +294,12 @@
 
 		input {
 			padding: 0.55rem 0.65rem;
-			border: 1px solid #e2e8f0;
-			border-radius: 0.65rem;
+			border: 1.5px solid var(--fit-pink-light, #fce7f3);
+			border-radius: 0.85rem;
 			font-size: 0.875rem;
 			font-weight: 600;
-			color: #0f172a;
-			background: #f8fafc;
+			color: #831843;
+			background: #fff5f7;
 		}
 	}
 
@@ -308,7 +309,7 @@
 		margin-bottom: 0.25rem;
 
 		strong {
-			color: #c2410c;
+			color: var(--fit-text-accent, #db2777);
 		}
 	}
 
@@ -323,7 +324,7 @@
 		color: #64748b;
 
 		strong {
-			color: #c2410c;
+			color: var(--fit-text-accent, #db2777);
 		}
 	}
 
@@ -342,12 +343,12 @@
 	.backup-btn {
 		flex: 1;
 		padding: 0.6rem 0.5rem;
-		border-radius: 0.65rem;
-		border: 1px solid #e2e8f0;
-		background: #f8fafc;
+		border-radius: 0.85rem;
+		border: 1.5px solid var(--fit-pink-light, #fce7f3);
+		background: #fff5f7;
 		font-size: 0.8125rem;
 		font-weight: 700;
-		color: #334155;
+		color: #831843;
 		cursor: pointer;
 		text-align: center;
 	}
@@ -368,15 +369,16 @@
 		width: 100%;
 		padding: 0.875rem;
 		border: none;
-		border-radius: 0.75rem;
-		background: #fef2f2;
-		color: #dc2626;
+		border-radius: 1rem;
+		background: #fff1f2;
+		color: #e11d48;
 		font-size: 0.9375rem;
 		font-weight: 700;
 		cursor: pointer;
+		border: 1.5px solid #fecdd3;
 
 		&:active {
-			background: #fee2e2;
+			background: #ffe4e6;
 		}
 	}
 

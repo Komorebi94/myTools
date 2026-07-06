@@ -46,10 +46,17 @@
 
 <style scoped lang="scss">
 	.task-item {
-		border-radius: 0.75rem;
-		background: #f8fafc;
-		border: 1px solid #f1f5f9;
+		position: relative;
+		border-radius: 1rem;
+		background: linear-gradient(135deg, #fff, #fff5f7);
+		border: 1.5px solid var(--fit-pink-light, #fce7f3);
 		overflow: hidden;
+		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+		&.expanded {
+			border-color: rgba(244, 114, 182, 0.4);
+			box-shadow: 0 4px 16px rgba(244, 114, 182, 0.1);
+		}
 	}
 
 	.task-toggle {
@@ -66,8 +73,15 @@
 	}
 
 	.task-icon {
-		font-size: 1.25rem;
+		font-size: 1.375rem;
 		flex-shrink: 0;
+		width: 2.25rem;
+		height: 2.25rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 0.75rem;
+		background: var(--fit-pink-light, #fce7f3);
 	}
 
 	.task-body {
@@ -87,12 +101,12 @@
 	.task-label {
 		font-size: 0.875rem;
 		font-weight: 600;
-		color: #0f172a;
+		color: #831843;
 	}
 
 	.task-rhythm {
 		font-size: 0.6875rem;
-		color: #ea580c;
+		color: var(--fit-text-accent, #db2777);
 		font-weight: 500;
 	}
 
@@ -114,10 +128,10 @@
 	.kcal-pill {
 		font-size: 0.6875rem;
 		font-weight: 700;
-		padding: 0.12rem 0.4rem;
+		padding: 0.15rem 0.45rem;
 		border-radius: 999px;
-		background: #ffedd5;
-		color: #c2410c;
+		background: linear-gradient(135deg, var(--fit-pink-light, #fce7f3), var(--fit-peach-light, #ffedd5));
+		color: var(--fit-text-accent, #db2777);
 	}
 
 	.chevron {
@@ -134,7 +148,8 @@
 
 	.task-guide {
 		padding: 0 0.875rem 0.875rem;
-		border-top: 1px dashed #e2e8f0;
+		border-top: 1px dashed rgba(244, 114, 182, 0.25);
+		background: rgba(255, 245, 247, 0.6);
 	}
 
 	.guide-target {

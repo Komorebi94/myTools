@@ -34,6 +34,8 @@
 
 		<AppToast :message="toast" variant="fitness" anchor="footer" />
 
+		<FitnessCelebration :tick="celebrationTick" />
+
 		<SurpriseRewardModal
 			:visible="showSurpriseModal"
 			:tier="activeSurpriseTier"
@@ -56,6 +58,7 @@
 	import AppToast from '@/components/AppToast/index.vue'
 	import { usePageBodyClass } from '@/composables/usePageBodyClass'
 	import SurpriseRewardModal from './components/SurpriseRewardModal.vue'
+	import FitnessCelebration from './components/FitnessCelebration.vue'
 
 	usePageBodyClass('fitness-page-active')
 
@@ -64,6 +67,7 @@
 
 	const {
 		toast,
+		celebrationTick,
 		isSimMode,
 		simDay,
 		state,
@@ -75,9 +79,9 @@
 	const activeTab = ref('home')
 
 	const navItems = [
-		{ id: 'home', label: '首页', icon: '🏠' },
-		{ id: 'records', label: '台账', icon: '📒' },
-		{ id: 'settings', label: '规则', icon: '⚙️' }
+		{ id: 'home', label: '首页', icon: '🏡' },
+		{ id: 'records', label: '台账', icon: '💰' },
+		{ id: 'settings', label: '规则', icon: '📖' }
 	]
 
 	watch(
@@ -97,17 +101,29 @@
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
-		background: #fff7ed;
+		background: #fff5f7;
 		--app-footer-stack: calc(4.75rem + var(--safe-bottom));
+		--fit-pink: #f472b6;
+		--fit-pink-dark: #ec4899;
+		--fit-peach: #fb923c;
+		--fit-cream: #fff5f7;
+		--fit-peach-light: #ffedd5;
+		--fit-pink-light: #fce7f3;
+		--fit-lavender: #ede9fe;
+		--fit-card-border: rgba(244, 114, 182, 0.18);
+		--fit-shadow: 0 8px 28px rgba(244, 114, 182, 0.14);
+		--fit-text-accent: #db2777;
+		--fit-text-warm: #be185d;
 	}
 
 	.fitness-bg {
 		position: absolute;
 		inset: 0;
 		background:
-			radial-gradient(ellipse 120% 80% at 50% -20%, rgba(251, 146, 60, 0.4), transparent 55%),
-			radial-gradient(ellipse 80% 50% at 0% 0%, rgba(244, 114, 182, 0.18), transparent 45%),
-			linear-gradient(180deg, #ea580c 0%, #fb923c 26%, #fff7ed 42%);
+			radial-gradient(ellipse 110% 75% at 50% -18%, rgba(251, 207, 232, 0.65), transparent 52%),
+			radial-gradient(ellipse 55% 40% at 92% 8%, rgba(254, 215, 170, 0.45), transparent 42%),
+			radial-gradient(ellipse 45% 35% at 4% 12%, rgba(196, 181, 253, 0.3), transparent 40%),
+			linear-gradient(180deg, #f472b6 0%, #fb7185 18%, #fda4af 32%, #fff5f7 46%);
 		pointer-events: none;
 	}
 
@@ -121,17 +137,28 @@
 			font-size: 1.25rem;
 			font-weight: 800;
 			color: #fff;
-			letter-spacing: 0.02em;
-			text-shadow: 0 1px 8px rgba(124, 45, 18, 0.35);
+			letter-spacing: 0.03em;
+			text-shadow: 0 2px 10px rgba(190, 24, 93, 0.35);
 		}
 
 		p {
 			font-size: 0.8125rem;
 			font-weight: 500;
-			color: #fff7ed;
+			color: #fff1f2;
 			margin-top: 0.25rem;
-			text-shadow: 0 1px 4px rgba(124, 45, 18, 0.25);
+			text-shadow: 0 1px 4px rgba(190, 24, 93, 0.2);
 		}
+	}
+
+	.fitness-main {
+		position: relative;
+		z-index: 1;
+		flex: 1;
+		overflow-y: auto;
+		overflow-x: hidden;
+		-webkit-overflow-scrolling: touch;
+		padding: 0 1rem 1rem;
+		padding-bottom: calc(5.5rem + var(--safe-bottom));
 	}
 
 	.sim-banner {
@@ -167,29 +194,20 @@
 		}
 	}
 
-	.fitness-main {
-		position: relative;
-		z-index: 1;
-		flex: 1;
-		overflow-y: auto;
-		overflow-x: hidden;
-		-webkit-overflow-scrolling: touch;
-		padding: 0 1rem 1rem;
-		padding-bottom: calc(5rem + var(--safe-bottom));
-	}
-
 	.bottom-nav {
 		position: fixed;
-		left: 0;
-		right: 0;
-		bottom: 0;
+		left: 0.75rem;
+		right: 0.75rem;
+		bottom: calc(0.5rem + var(--safe-bottom));
 		z-index: 100;
 		display: flex;
-		padding: 0.5rem 0.75rem calc(0.5rem + var(--safe-bottom));
-		background: rgba(255, 255, 255, 0.92);
-		backdrop-filter: blur(12px);
-		border-top: 1px solid rgba(15, 23, 42, 0.06);
-		box-shadow: 0 -4px 24px rgba(15, 23, 42, 0.06);
+		gap: 0.25rem;
+		padding: 0.375rem;
+		background: rgba(255, 255, 255, 0.88);
+		backdrop-filter: blur(16px);
+		border: 1.5px solid var(--fit-card-border);
+		border-radius: 1.25rem;
+		box-shadow: 0 8px 32px rgba(244, 114, 182, 0.18);
 	}
 
 	.nav-btn {
@@ -197,38 +215,45 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 0.2rem;
-		padding: 0.375rem;
+		gap: 0.15rem;
+		padding: 0.45rem 0.375rem;
 		border: none;
 		background: transparent;
 		cursor: pointer;
-		border-radius: 0.75rem;
-		transition: background 0.15s;
+		border-radius: 1rem;
+		transition:
+			background 0.2s ease,
+			transform 0.15s ease;
+
+		&:active {
+			transform: scale(0.96);
+		}
 
 		&.active {
-			background: #ffedd5;
+			background: linear-gradient(135deg, var(--fit-pink-light), var(--fit-peach-light));
 
 			.nav-label {
-				color: #ea580c;
+				color: var(--fit-text-accent);
 				font-weight: 700;
 			}
 		}
 	}
 
 	.nav-icon {
-		font-size: 1.25rem;
+		font-size: 1.375rem;
 		line-height: 1;
 	}
 
 	.nav-label {
 		font-size: 0.6875rem;
-		color: #64748b;
+		color: #94a3b8;
+		font-weight: 500;
 	}
 </style>
 
 <style lang="scss">
 	body.fitness-page-active {
 		overflow: auto;
-		background: #fff7ed;
+		background: #fff5f7;
 	}
 </style>

@@ -60,23 +60,24 @@
 		align-items: center;
 		justify-content: center;
 		padding: 1.5rem;
-		background: rgba(15, 23, 42, 0.45);
-		backdrop-filter: blur(4px);
+		background: rgba(131, 24, 67, 0.35);
+		backdrop-filter: blur(6px);
 	}
 
 	.modal-card {
 		width: 100%;
 		max-width: 20rem;
 		padding: 1.5rem;
-		border-radius: 1.25rem;
+		border-radius: 1.5rem;
 		background: #fff;
-		box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
+		border: 1.5px solid rgba(244, 114, 182, 0.2);
+		box-shadow: 0 24px 48px rgba(244, 114, 182, 0.2);
 	}
 
 	.modal-title {
 		font-size: 1.125rem;
 		font-weight: 700;
-		color: #0f172a;
+		color: #831843;
 		margin-bottom: 0.5rem;
 	}
 
@@ -98,7 +99,7 @@
 
 		input {
 			margin-top: 0.15rem;
-			accent-color: #10b981;
+			accent-color: #f472b6;
 		}
 	}
 
@@ -111,7 +112,7 @@
 		flex: 1;
 		padding: 0.75rem 1rem;
 		border: none;
-		border-radius: 0.75rem;
+		border-radius: 1rem;
 		font-size: 0.9375rem;
 		font-weight: 600;
 		cursor: pointer;
@@ -120,17 +121,19 @@
 			opacity 0.15s ease;
 
 		&:active {
-			transform: scale(0.98);
+			transform: scale(0.97);
 		}
 
 		&.ghost {
-			background: #f1f5f9;
-			color: #475569;
+			background: #fff5f7;
+			color: #64748b;
+			border: 1.5px solid rgba(244, 114, 182, 0.2);
 		}
 
 		&.primary {
-			background: linear-gradient(135deg, #fb923c, #ea580c);
+			background: linear-gradient(135deg, #f9a8d4, #f472b6, #fb923c);
 			color: #fff;
+			box-shadow: 0 6px 20px rgba(244, 114, 182, 0.35);
 		}
 	}
 
