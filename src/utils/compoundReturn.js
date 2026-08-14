@@ -1,9 +1,9 @@
 export const PRINCIPAL_WAN_RANGE = { min: 0.01, max: 100000 }
-export const RATE_PERCENT_RANGE = { min: 0, max: 100 }
+export const RATE_PERCENT_RANGE = { min: -50, max: 50 }
 export const YEARS_RANGE = { min: 1, max: 80 }
 
 export const PRINCIPAL_WAN_PRESETS = [30, 50]
-export const RATE_PERCENT_PRESETS = [8, 10, 15]
+export const RATE_PERCENT_PRESETS = [-5, 8, 10, 15]
 export const YEAR_PRESETS = [20, 25, 30]
 
 const WAN_DIGITS = 1

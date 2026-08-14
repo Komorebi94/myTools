@@ -57,7 +57,13 @@ describe('calculateCompoundReturn', () => {
 			field: 'principalWan'
 		})
 		expect(
-			calculateCompoundReturn({ principalWan: 30, ratePercent: 101, years: 20 })
+			calculateCompoundReturn({ principalWan: 30, ratePercent: 51, years: 20 })
+		).toMatchObject({
+			ok: false,
+			field: 'ratePercent'
+		})
+		expect(
+			calculateCompoundReturn({ principalWan: 30, ratePercent: -51, years: 20 })
 		).toMatchObject({
 			ok: false,
 			field: 'ratePercent'
@@ -68,6 +74,17 @@ describe('calculateCompoundReturn', () => {
 			ok: false,
 			field: 'years'
 		})
+	})
+
+	it('supports negative annual rates above -50%', () => {
+		const result = calculateCompoundReturn({
+			principalWan: 30,
+			ratePercent: -5,
+			years: 20
+		})
+		expect(result.ok).toBe(true)
+		expect(result.finalWan).toBeLessThan(30)
+		expect(result.profitWan).toBeLessThan(0)
 	})
 })
 
