@@ -1,5 +1,5 @@
 <template>
-	<div class="return-calculator">
+	<div class="return-calculator" :class="{ 'is-keyboard-open': keyboardOpen }">
 		<div class="rc-bg" aria-hidden="true" />
 
 		<div class="rc-frame">
@@ -217,7 +217,7 @@
 </template>
 
 <script setup>
-	import { computed, ref } from 'vue'
+	import { computed, onMounted, onUnmounted, ref } from 'vue'
 	import { usePageBodyClass } from '@/composables/usePageBodyClass'
 	import {
 		PRINCIPAL_WAN_PRESETS,
@@ -229,6 +229,37 @@
 	} from '@/utils/compoundReturn'
 
 	usePageBodyClass('return-page-active')
+
+	const keyboardOpen = ref(false)
+	const KEYBOARD_INSET_PX = 80
+
+	function syncKeyboard() {
+		const viewport = window.visualViewport
+		if (!viewport) {
+			keyboardOpen.value = false
+			return
+		}
+		const inset = window.innerHeight - viewport.height - viewport.offsetTop
+		keyboardOpen.value = inset > KEYBOARD_INSET_PX
+	}
+
+	function revealField(el) {
+		if (!(el instanceof HTMLElement)) return
+		requestAnimationFrame(() => {
+			el.scrollIntoView({ block: 'center', inline: 'nearest' })
+		})
+	}
+
+	onMounted(() => {
+		syncKeyboard()
+		window.visualViewport?.addEventListener('resize', syncKeyboard)
+		window.visualViewport?.addEventListener('scroll', syncKeyboard)
+	})
+
+	onUnmounted(() => {
+		window.visualViewport?.removeEventListener('resize', syncKeyboard)
+		window.visualViewport?.removeEventListener('scroll', syncKeyboard)
+	})
 
 	const principalWan = ref('30')
 	const ratePercent = ref('8')
@@ -276,12 +307,15 @@
 
 	function selectInput(event) {
 		event.target.select()
+		revealField(event.target)
 	}
 
 	function applyPreset(field, value) {
 		fieldRefs[field].value = String(value)
 		requestAnimationFrame(() => {
-			document.getElementById(PRESET_INPUT_IDS[field])?.focus()
+			const input = document.getElementById(PRESET_INPUT_IDS[field])
+			input?.focus()
+			revealField(input)
 		})
 	}
 
@@ -292,7 +326,9 @@
 			event.target.blur()
 			return
 		}
-		document.getElementById(FIELD_IDS[index + 1])?.focus()
+		const next = document.getElementById(FIELD_IDS[index + 1])
+		next?.focus()
+		revealField(next)
 	}
 </script>
 
@@ -300,7 +336,7 @@
 	html:has(body.return-page-active),
 	body.return-page-active,
 	body.return-page-active #app {
-		height: 100%;
+		height: 100svh;
 		overflow: hidden;
 	}
 
@@ -324,10 +360,14 @@
 		position: relative;
 		box-sizing: border-box;
 		height: 100svh;
-		height: 100dvh;
+		max-height: 100svh;
 		display: flex;
 		padding: calc(0.7rem + var(--safe-top)) 0.75rem calc(0.7rem + var(--safe-bottom));
 		overflow: hidden;
+
+		&.is-keyboard-open {
+			overflow-y: auto;
+		}
 		color: var(--rc-text);
 		font-family: var(--rc-font);
 		background: var(--rc-bg);
