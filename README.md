@@ -8,6 +8,7 @@ Vue 3 + Vite 实现的跨年倒计时与生日祝福页面，支持烟花、弹�
 | 生日祝福      | https://komorebi94.github.io/myTools/birthday |
 | 健身存钱罐    | https://komorebi94.github.io/myTools/fitness  |
 | LUJX 训练计划 | https://komorebi94.github.io/myTools/lujx     |
+| 复利收益计算  | https://komorebi94.github.io/myTools/return   |
 
 ## 快速开始
 
@@ -22,6 +23,7 @@ npm run dev
 - 生日：http://localhost:5173/birthday
 - 健身存钱罐：http://localhost:5173/fitness
 - LUJX 训练：http://localhost:5173/lujx
+- 复利收益：http://localhost:5173/return
 
 生产构建与本地预览：
 
@@ -162,6 +164,10 @@ npm run preview
 
 「训练记录」页支持 JSON 备份导出/导入。数据仅存本机 `localStorage`。
 
+### 复利收益计算 `/return`
+
+按年复利估算终值：终值 = 初始资金 × (1 + 年收益率)^年数。输入单位为万、%、年；结果保留 1 位小数。不含追加投入与税费。
+
 环境变量见 [.env.example](.env.example)（`VITE_DEFAULT_TARGET`、`VITE_BASE`）。
 
 生日页背景音乐来自 [Mixkit](https://mixkit.co/) 免版税曲库（`public/audio/happy-birthday.mp3`），可替换为自有音频文件。
@@ -181,7 +187,8 @@ src/
     ├── HappyNewYear/
     ├── Birthday/
     ├── FitnessDiscipline/
-    └── LujxPlan/
+    ├── LujxPlan/
+    └── ReturnCalculator/
 ```
 
 ## 多端适配

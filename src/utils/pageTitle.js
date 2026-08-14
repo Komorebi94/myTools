@@ -4,7 +4,8 @@ export const ROUTE_TITLES = {
 	HappyNewYear: '新年快乐 · 跨年倒计时',
 	Birthday: '生日快乐',
 	FitnessDiscipline: '笑笑的存钱罐',
-	LujxPlan: 'LUJX 训练计划'
+	LujxPlan: 'LUJX 训练计划',
+	ReturnCalculator: '复利收益计算器'
 }
 
 export const FITNESS_TAB_TITLES = {

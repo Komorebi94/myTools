@@ -1,7 +1,7 @@
 {
 	"name": "生活小工具",
 	"short_name": "生活小工具",
-	"description": "跨年倒计时、生日祝福、健身打卡与训练计划等生活小工具",
+	"description": "跨年倒计时、生日祝福、健身打卡、训练计划与复利收益计算等生活小工具",
 	"start_url": ".",
 	"display": "standalone",
 	"background_color": "#000000",

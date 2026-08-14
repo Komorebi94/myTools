@@ -6,6 +6,7 @@ const HappyNewYear = () => import('@/views/HappyNewYear/index.vue')
 const Birthday = () => import('@/views/Birthday/index.vue')
 const FitnessDiscipline = () => import('@/views/FitnessDiscipline/index.vue')
 const LujxPlan = () => import('@/views/LujxPlan/index.vue')
+const ReturnCalculator = () => import('@/views/ReturnCalculator/index.vue')
 
 const routes = [
 	{
@@ -27,6 +28,11 @@ const routes = [
 		path: '/lujx',
 		name: 'LujxPlan',
 		component: LujxPlan
+	},
+	{
+		path: '/return',
+		name: 'ReturnCalculator',
+		component: ReturnCalculator
 	},
 	{
 		path: '/:pathMatch(.*)*',
